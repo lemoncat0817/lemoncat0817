@@ -16,3 +16,22 @@ export const facts = [
   "bug 跟貓一樣，總是在你不注意的時候跑到鍵盤上。",
   "如果這行有錯字，那是貓踩過鍵盤。",
 ];
+
+export const factsEn = [
+  "Cats sleep around 12 to 16 hours a day.",
+  "Cats can't taste sweetness. The gene for their sweet receptor doesn't work.",
+  "Adult cats rarely meow at each other. Most meows are meant for humans.",
+  "A cat's purr sits roughly between 25 and 150 Hz.",
+  "Slow-blink at a cat and it often blinks back, then is more likely to come over.",
+  "Most cats have five toes on each front paw and four on each back paw.",
+  "When a cat falls, it twists in midair to land on its feet.",
+  "Kneading is thought to be a habit left over from nursing as a kitten.",
+  "A walking cat puts each hind paw where its front paw just stepped.",
+  "The spines on a cat's tongue are tiny hollow scoops that carry saliva deep into the fur.",
+  "Cats walk on their toes. The backward-bending 'knee' on a hind leg is actually the heel.",
+  "A cat's whiskers are packed with nerves and can sense tiny changes in airflow.",
+  "Cats sometimes sniff with their mouth open to use a second scent organ.",
+  "A 9,500-year-old grave on Cyprus held a person buried together with a cat.",
+  "Bugs are like cats: they show up on the keyboard the moment you look away.",
+  "If this line has a typo, blame the cat on the keyboard.",
+];

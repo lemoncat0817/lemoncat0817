@@ -5,7 +5,7 @@ import { render } from './build.mjs';
 import { BODY_ITEMS, HEAD_ITEMS, POSES, TOYS } from './cat.mjs';
 import { GUESTS } from './guest.mjs';
 import { WEATHERS } from './weather.mjs';
-import { facts } from './facts.mjs';
+import { facts, factsEn } from './facts.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dir = join(root, 'gallery');
@@ -48,7 +48,7 @@ const states = [
   { id: 'birthday-eating', pose: 'eat', head: 'partyhat', body: 'cake' },
 ];
 
-const base = { toy: 'butterfly',  date: '2026-01-01', slot: 'morning', head: null, body: null, mood: null, weather: null, guest: null, fact: facts[0] };
+const base = { toy: 'butterfly',  date: '2026-01-01', slot: 'morning', head: null, body: null, mood: null, weather: null, guest: null, fact: facts[0], factEn: factsEn[9] };
 const cells = states.map((s) => {
   const state = { ...base, ...s };
   mkdirSync(join(dir, s.id), { recursive: true });

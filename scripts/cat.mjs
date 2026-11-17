@@ -2,20 +2,25 @@ import { renderWeather, weatherCss } from './weather.mjs';
 
 export const FONT = "'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif";
 
+// SVG 的 systemLanguage 是精確比對，只寫 zh 對不到 zh-TW，所以常見地區碼都要列出來
+const ZH = 'zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN';
+
+export const bilingual = (zh, en) => `<switch><g systemLanguage="${ZH}">${zh}</g><g>${en}</g></switch>`;
+
 export const POSES = {
-  idle: { status: '貓咪醒著，正在巡視 commit', dot: 'green' },
-  sleep: { status: '貓咪睡覺中，請輕聲細語', dot: 'muted' },
-  stretch: { status: '貓咪伸懶腰，早安', dot: 'green' },
-  eat: { status: '貓咪在吃午餐，別打擾', dot: 'green' },
-  nap: { status: '貓咪午後打盹中', dot: 'muted' },
-  chase: { status: '貓咪在追蝴蝶', dot: 'green' },
-  bored: { status: '好幾天沒有 commit，貓咪無聊到趴著', dot: 'muted' },
+  idle: { zh: '貓咪醒著，正在巡視 commit', en: 'The cat is up, patrolling the commits', dot: 'green' },
+  sleep: { zh: '貓咪睡覺中，請輕聲細語', en: 'The cat is asleep. Please keep it down', dot: 'muted' },
+  stretch: { zh: '貓咪伸懶腰，早安', en: 'The cat is stretching. Good morning', dot: 'green' },
+  eat: { zh: '貓咪在吃午餐，別打擾', en: 'The cat is having lunch. Do not disturb', dot: 'green' },
+  nap: { zh: '貓咪午後打盹中', en: 'The cat is taking an afternoon nap', dot: 'muted' },
+  chase: { zh: '貓咪在追蝴蝶', en: 'The cat is chasing a butterfly', dot: 'green' },
+  bored: { zh: '好幾天沒有 commit，貓咪無聊到趴著', en: 'No commits for days. The cat is bored flat', dot: 'muted' },
 };
 
 export const TOYS = {
-  butterfly: '貓咪在追蝴蝶',
-  wand: '貓咪盯著逗貓棒',
-  yarn: '貓咪在玩毛線球',
+  butterfly: { zh: '貓咪在追蝴蝶', en: 'The cat is chasing a butterfly' },
+  wand: { zh: '貓咪盯著逗貓棒', en: 'The cat is eyeing the feather wand' },
+  yarn: { zh: '貓咪在玩毛線球', en: 'The cat is batting a ball of yarn' },
 };
 
 export const HEAD_ITEMS = ['santa', 'pumpkin', 'partyhat', 'sunglasses', 'flowers', 'maple'];

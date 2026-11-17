@@ -1,8 +1,8 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { FONT, POSES, TOYS, catCss, renderCat } from './cat.mjs';
-import { facts } from './facts.mjs';
+import { FONT, POSES, TOYS, bilingual, catCss, renderCat } from './cat.mjs';
+import { facts, factsEn } from './facts.mjs';
 import { guestFor, renderGuest } from './guest.mjs';
 import { fetchCalendar, fetchWeather, moodOf } from './data.mjs';
 import { renderCalendar } from './calendar.mjs';
@@ -81,6 +81,7 @@ export const resolveState = async () => {
     weather: weather === 'none' ? null : weather,
     guest: pick('guest', guestFor(day)),
     fact: facts[((day % facts.length) + facts.length) % facts.length],
+    factEn: factsEn[((day % factsEn.length) + factsEn.length) % factsEn.length],
   };
 };
 
@@ -91,64 +92,77 @@ const themes = {
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
+// 中文逐字斷行，英文以單字為單位斷行；字寬是估算值，遮罩寬度另外多留餘裕
 const wrap = (text, max, size) => {
-  const w = (ch) => (/[\x00-\x7f]/.test(ch) ? size * 0.58 : size);
+  const w = (ch) => (/[\x00-\x7f]/.test(ch) ? size * 0.5 : size);
+  const width = (str) => [...str].reduce((sum, ch) => sum + w(ch), 0);
+  const tokens = text.match(/[\x21-\x7e]+\s*|\s+|[^\x00-\x7f]/g) ?? [];
   const lines = [];
   let line = '';
-  let width = 0;
-  for (const ch of text) {
-    if (width + w(ch) > max) {
-      lines.push(line);
+  for (const token of tokens) {
+    if (line && width(line + token.trimEnd()) > max) {
+      lines.push(line.trimEnd());
       line = '';
-      width = 0;
     }
-    line += ch;
-    width += w(ch);
+    line += token;
   }
-  lines.push(line);
-  return lines.map((l) => ({ text: l, width: [...l].reduce((s, ch) => s + w(ch), 0) }));
+  lines.push(line.trimEnd());
+  return lines.map((l) => ({ text: l, width: width(l) }));
+};
+
+const typing = (c, text, id) => {
+  const size = 17;
+  const cycle = 16;
+  const lines = wrap(text, 500, size);
+  const p = (t) => ((t / cycle) * 100).toFixed(2);
+  let start = 1.2;
+  return lines.map((l, i) => {
+    const n = [...l.text].length;
+    const end = start + n * 0.09;
+    const css = `@keyframes ${id}${i}{0%,${p(start)}%{transform:scaleX(0);animation-timing-function:steps(${n})}${p(end)}%,93%{transform:scaleX(1)}94%,100%{transform:scaleX(0)}}
+#${id}${i}{transform-box:fill-box;transform-origin:left;animation:${id}${i} ${cycle}s infinite}`;
+    const body = `<clipPath id="clip-${id}${i}"><rect id="${id}${i}" x="0" y="${i * 28}" width="${Math.ceil(l.width * 1.15) + 6}" height="28"/></clipPath>
+<text x="0" y="${i * 28 + 20}" font-size="${size}" fill="${c.text}" clip-path="url(#clip-${id}${i})">${esc(l.text)}</text>`;
+    start = end;
+    return { css, body };
+  });
 };
 
 const banner = (name, state) => {
   const c = themes[name];
-  const { fact } = state;
-  const size = 17;
-  const lines = wrap(fact, 500, size);
-  const cycle = 16;
-  const typing = lines
-    .map((l, i) => {
-      const n = [...l.text].length;
-      const start = 1.2 + lines.slice(0, i).reduce((s, x) => s + [...x.text].length * 0.09, 0);
-      const end = start + n * 0.09;
-      const p = (t) => ((t / cycle) * 100).toFixed(2);
-      return {
-        css: `@keyframes type${i}{0%,${p(start)}%{transform:scaleX(0);animation-timing-function:steps(${n})}${p(end)}%,93%{transform:scaleX(1)}94%,100%{transform:scaleX(0)}}
-#c${i}{transform-box:fill-box;transform-origin:left;animation:type${i} ${cycle}s infinite}`,
-        body: `<clipPath id="clip${i}"><rect id="c${i}" x="0" y="${i * 28}" width="${Math.ceil(l.width) + 6}" height="28"/></clipPath>
-<text x="0" y="${i * 28 + 20}" font-size="${size}" fill="${c.text}" clip-path="url(#clip${i})">${esc(l.text)}</text>`,
-      };
-    });
-
+  const zh = typing(c, state.fact, 'tz');
+  const en = typing(c, state.factEn, 'te');
+  const birthday = state.body === 'cake';
   const occasion =
-    state.pose === 'sleep' ? null : state.body === 'cake' ? '今天是檸檬貓的生日，一起吃蛋糕' : state.head === 'partyhat' ? '今天是世界貓日' : null;
-  const status = occasion ?? (state.pose === 'chase' ? TOYS[state.toy] : POSES[state.pose].status);
+    state.pose === 'sleep'
+      ? null
+      : birthday
+        ? { zh: '今天是檸檬貓的生日，一起吃蛋糕', en: "It's Lemoncat's birthday. Have some cake" }
+        : state.head === 'partyhat'
+          ? { zh: '今天是世界貓日', en: 'Happy International Cat Day' }
+          : null;
+  const status = occasion ?? (state.pose === 'chase' ? TOYS[state.toy] : POSES[state.pose]);
   const dot = POSES[state.pose].dot === 'muted' ? c.muted : '#3fb950';
+  const line = (text) => `<text x="18" font-size="14" fill="${c.muted}">${esc(text)}</text>`;
+  const label = (text, spacing) => `<text font-size="13" fill="${c.muted}" font-weight="700" y="-8" letter-spacing="${spacing}">${text}</text>`;
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="250" viewBox="0 0 840 250" role="img" aria-label="Lemoncat 檸檬貓：網頁工程師。今日冷知識：${esc(fact)}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="250" viewBox="0 0 840 250" role="img" aria-label="檸檬貓 Lemoncat. ${esc(state.factEn)}">
 <style>
 text{font-family:${FONT}}
 ${catCss(state)}
 @media (prefers-reduced-motion:no-preference){.dot{animation:pulse 2.4s ease-in-out infinite}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-${typing.map((t) => t.css).join('\n')}
+${[...zh, ...en].map((t) => t.css).join('\n')}
 </style>
 <g transform="translate(24 14) scale(1.02)">${renderCat(c, state)}</g>
 <g transform="translate(250 84)">
-  <text font-size="40" font-weight="800" fill="${c.text}" y="0">檸檬貓 <tspan fill="${c.muted}" font-weight="500" font-size="26">Lemoncat</tspan></text>
-  <g transform="translate(0 36)"><circle class="dot" cx="5" cy="-5" r="4.5" fill="${dot}"/><text x="18" font-size="14" fill="${c.muted}">${status}</text></g>
+  ${bilingual(
+    `<text font-size="40" font-weight="800" fill="${c.text}" y="0">檸檬貓 <tspan fill="${c.muted}" font-weight="500" font-size="26">Lemoncat</tspan></text>`,
+    `<text font-size="40" font-weight="800" fill="${c.text}" y="0">Lemoncat <tspan fill="${c.muted}" font-weight="500" font-size="26">檸檬貓</tspan></text>`,
+  )}
+  <g transform="translate(0 36)"><circle class="dot" cx="5" cy="-5" r="4.5" fill="${dot}"/>${bilingual(line(status.zh), line(status.en))}</g>
   <g transform="translate(0 82)">
-    <text font-size="13" fill="${c.muted}" font-weight="700" y="-8" letter-spacing="1">今日貓咪冷知識</text>
-    ${typing.map((t) => t.body).join('\n    ')}
+    ${bilingual(label('今日貓咪冷知識', 1) + zh.map((t) => t.body).join(''), label('CAT FACT OF THE DAY', 0.6) + en.map((t) => t.body).join(''))}
   </g>
 </g>
 </svg>
@@ -205,5 +219,5 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const outDir = flag('out') ? join(process.cwd(), flag('out')) : join(root, 'assets');
   mkdirSync(outDir, { recursive: true });
   for (const [file, svg] of Object.entries(render(state))) writeFileSync(join(outDir, file), svg);
-  console.log(JSON.stringify({ ...state, calendar: state.calendar && `${state.calendar.weeks.length} weeks, ${state.calendar.total} total` }));
+  console.log(JSON.stringify({ ...state, factEn: undefined, calendar: state.calendar && `${state.calendar.weeks.length} weeks, ${state.calendar.total} total` }));
 }

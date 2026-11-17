@@ -54,7 +54,7 @@ export const renderCalendar = (name, state, edge) => {
   const height = GRID_Y + 7 * STEP + 16;
 
   // 貓比正在蓋章的那一欄領先約一格半；掌印留一陣子再淡出，跟下一輪自然銜接
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="${height}" viewBox="0 0 840 ${height}" role="img" aria-label="過去一年 ${total} 次貢獻">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="${height}" viewBox="0 0 840 ${height}" role="img" aria-label="${total} contributions in the last year">
 <defs>${PAW}</defs>
 <style>
 text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif}
