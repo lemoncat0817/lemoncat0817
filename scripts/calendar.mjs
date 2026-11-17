@@ -1,7 +1,8 @@
+import { bilingual } from './cat.mjs';
 import { renderGuest } from './guest.mjs';
 
 const STEP = 15;
-const X0 = 26;
+const X0 = 42;
 const GRID_Y = 58;
 const STAMP = 0.17;
 const CYCLE = 14;
@@ -33,10 +34,32 @@ const legend = (p, y) => {
     return level ? paw(p.levels[level], x, y, level) : `<circle cx="${x}" cy="${y}" r="2.3" ${p.empty}/>`;
   };
   return `<g font-size="11" fill="${p.text}">
-  <text x="${right - 38 - 4 * STEP - 9}" y="${y + 4}" text-anchor="end">Less</text>
+  ${bilingual(`<text x="${right - 38 - 4 * STEP - 9}" y="${y + 4}" text-anchor="end">少</text>`, `<text x="${right - 38 - 4 * STEP - 9}" y="${y + 4}" text-anchor="end">Less</text>`)}
   ${[0, 1, 2, 3, 4].map(swatch).join('')}
-  <text x="${right}" y="${y + 4}" text-anchor="end">More</text>
+  ${bilingual(`<text x="${right}" y="${y + 4}" text-anchor="end">多</text>`, `<text x="${right}" y="${y + 4}" text-anchor="end">More</text>`)}
 </g>`;
+};
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// 貓走在格子上方，月份只能放在格子下方；首週若馬上換月就略過，避免跟下一個標籤擠在一起
+const monthLabels = (weeks, p, y) => {
+  const month = (i) => +weeks[i][0].date.slice(5, 7);
+  let last = -9;
+  const out = [];
+  weeks.forEach((_, i) => {
+    if (i && month(i) === month(i - 1)) return;
+    if (!i && weeks.length > 1 && month(1) !== month(0)) return;
+    if (i - last < 3 || i > weeks.length - 3) return;
+    last = i;
+    out.push([`<text x="${X0 + i * STEP - 3}" y="${y}">${month(i)}月</text>`, `<text x="${X0 + i * STEP - 3}" y="${y}">${MONTHS[month(i) - 1]}</text>`]);
+  });
+  return `<g font-size="11" fill="${p.text}">${bilingual(out.map((t) => t[0]).join(''), out.map((t) => t[1]).join(''))}</g>`;
+};
+
+const weekdayLabels = (p) => {
+  const row = (k) => [[1, '一', 'Mon'], [3, '三', 'Wed'], [5, '五', 'Fri']].map((r) => `<text x="${X0 - 12}" y="${GRID_Y + r[0] * STEP + 4}">${r[k]}</text>`).join('');
+  return `<g font-size="11" fill="${p.text}" text-anchor="end">${bilingual(row(1), row(2))}</g>`;
 };
 
 export const renderCalendar = (name, state, edge) => {
@@ -60,7 +83,7 @@ export const renderCalendar = (name, state, edge) => {
   const end = ((walk / CYCLE) * 100).toFixed(1);
   const from = X0 + 22;
   const to = from + weeks.length * STEP;
-  const height = GRID_Y + 7 * STEP + 16;
+  const height = GRID_Y + 7 * STEP + 34;
 
   // 貓比正在蓋章的那一欄領先約一格半；掌印留一陣子再淡出，跟下一輪自然銜接
   return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="${height}" viewBox="0 0 840 ${height}" role="img" aria-label="${total} contributions in the last year">
@@ -85,6 +108,8 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 @keyframes gstep{from{transform:rotate(-24deg)}to{transform:rotate(24deg)}}
 </style>
 ${columns}
+${weekdayLabels(p)}
+${monthLabels(weeks, p, GRID_Y + 7 * STEP + 6)}
 ${state.guest ? renderGuest(state.guest, edge) : ''}
 ${legend(p, height - 9)}
 </svg>
