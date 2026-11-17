@@ -1,6 +1,9 @@
 name: update-cat
 
 on:
+  push:
+    branches: [main]
+    paths: ['scripts/**', '.github/workflows/update.yml']
   schedule:
     - cron: '*/20 * * * *'
   workflow_dispatch:
@@ -8,11 +11,19 @@ on:
 permissions:
   contents: write
 
+# 推送與排程可能同時觸發，排隊執行才不會互相推送衝突
+concurrency:
+  group: update-cat
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # 取 main 最新版而非觸發當下的 commit，排隊期間前一輪推的圖檔才不會造成分叉
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: 22
