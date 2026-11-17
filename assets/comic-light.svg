@@ -1,20 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="840" height="200" viewBox="0 0 840 200" role="img" aria-label="A day of Lemoncat: still asleep, face wash, push the cup, time to code">
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="200" viewBox="0 0 840 200" role="img" aria-label="Lemoncat's day so far. Late night: Fast asleep, Morning: Face wash, Noon: Lunch time, Afternoon: Quick nap">
 <style>
 text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif}
 @media (prefers-reduced-motion:no-preference){
 .blink{transform-box:fill-box;transform-origin:center;animation:blink 6s infinite}
-.look{animation:look 9s ease-in-out infinite}
 .tail{transform-box:fill-box;transform-origin:0% 95%;animation:tail 5.3s ease-in-out infinite}
 .heart{animation:zzz 2.6s ease-in-out infinite}
-.breathe{transform-box:fill-box;transform-origin:50% 100%;--b:1.012;animation:breathe 3.6s ease-in-out infinite}
+.breathe{transform-box:fill-box;transform-origin:50% 100%}
 .head{transform-box:fill-box;transform-origin:50% 100%}
-
 .yawn{transform-box:fill-box;transform-origin:50% 0%;animation:yawn 6s ease-in-out infinite}
 .zzz{animation:zzz 3.2s ease-in-out infinite}
 .packet{transform-box:fill-box;transform-origin:50% 0%;animation:sway 3s ease-in-out infinite}
 .moon{animation:glow 4s ease-in-out infinite}
 .flame{transform-box:fill-box;transform-origin:50% 100%;animation:flicker .5s ease-in-out infinite alternate}
 .conf{animation:fall 4s linear infinite}
+.look{animation:look 9s ease-in-out infinite}
+.breathe{--b:1.012;animation:breathe 3.6s ease-in-out infinite}
+
 
 }
 .yawn{opacity:0}
@@ -55,11 +56,27 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 @keyframes rain{0%{transform:translateY(0);opacity:0}10%{opacity:1}100%{transform:translateY(230px);opacity:.8}}
 @keyframes bolt{0%,86%,92%,100%{opacity:0}88%,94%{opacity:1}}
 @media (prefers-reduced-motion:no-preference){
+.p0 .look{animation:look 9s ease-in-out infinite}
+.p0 .breathe{--b:1.025;animation:breathe 4s ease-in-out infinite}
+
+
+.p1 .look{animation:look 9s ease-in-out infinite}
+.p1 .breathe{--b:1.012;animation:breathe 3.6s ease-in-out infinite}
+
+
+.p2 .look{animation:look 9s ease-in-out infinite}
+.p2 .breathe{--b:1.012;animation:breathe 3s ease-in-out infinite}
+.p2 .head{animation:chomp 5s ease-in-out infinite}
+
+.p3 .look{animation:look 9s ease-in-out infinite}
+.p3 .breathe{--b:1.02;animation:breathe 4.4s ease-in-out infinite}
+.p3 .head{animation:nod 5.2s ease-in-out infinite}
+
+}
+@media (prefers-reduced-motion:no-preference){
 .wash{transform-box:fill-box;transform-origin:50% 100%;animation:wash 1.4s ease-in-out infinite}
 .push{animation:push 4s ease-in-out infinite}
 .cup{transform-box:fill-box;transform-origin:100% 100%;animation:cup 4s ease-in infinite}
-.p2 .look{animation:none;transform:translate(6px,4px)}
-.p3 .look{animation:read 2.6s ease-in-out infinite}
 }
 @keyframes wash{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(8px,-26px) rotate(-14deg)}}
 @keyframes push{0%,15%,60%,100%{transform:translateX(0)}30%,38%{transform:translateX(22px)}}
@@ -100,7 +117,8 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 
 <g class="zzz" fill="#59636e" font-family="'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif" font-weight="700"><text x="158" y="60" font-size="22">Z</text><text x="176" y="38" font-size="16">z</text></g>
 </g></g>
-  <switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">07:00 還在睡</text></g><g><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">07:00 Still asleep</text></g></switch>
+  
+  <switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">深夜 · 呼呼大睡</text></g><g><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">Late night · Fast asleep</text></g></switch>
 </g>
 <g transform="translate(214 0)" class="p1">
   <clipPath id="clip-p1"><rect x="1" y="1" width="196" height="168" rx="10"/></clipPath>
@@ -137,7 +155,8 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 
 <ellipse cx="100" cy="125" rx="3.5" ry="4.5" fill="#E8735A"/>
 <g class="wash"><ellipse fill="#F5D547" stroke="#9A7410" stroke-width="2" stroke-linejoin="round" cx="66" cy="140" rx="13" ry="17"/><path d="M58 128v6M66 126v6M74 128v6" stroke="#2B2508" stroke-opacity=".3" stroke-width="1.5" stroke-linecap="round"/></g></g></g>
-  <switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">08:00 洗把臉</text></g><g><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">08:00 Face wash</text></g></switch>
+  
+  <switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">早晨 · 洗把臉</text></g><g><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">Morning · Face wash</text></g></switch>
 </g>
 <g transform="translate(428 0)" class="p2">
   <clipPath id="clip-p2"><rect x="1" y="1" width="196" height="168" rx="10"/></clipPath>
@@ -160,7 +179,7 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
     <path d="M58 70q12-12 30-16" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="4" stroke-linecap="round"/>
     <path d="M100 48q1-8 6-12" fill="none" stroke="#5a7a2a" stroke-width="2.5" stroke-linecap="round"/>
     <path d="M105 37c6-10 18-12 26-8-5 9-17 13-26 8z" fill="#6CBF4A" stroke="#9A7410" stroke-width="1.5" stroke-linejoin="round"/>
-    <g class="blink"><ellipse cx="78" cy="94" rx="13" ry="14" fill="#fffdf2"/><ellipse class="look" cx="78" cy="94" rx="4.5" ry="9.5" fill="#2B2508"/></g><g class="blink"><ellipse cx="122" cy="94" rx="13" ry="14" fill="#fffdf2"/><ellipse class="look" cx="122" cy="94" rx="4.5" ry="9.5" fill="#2B2508"/></g>
+    <path d="M66 99q12-13 24 0" fill="none" stroke="#2B2508" stroke-width="3" stroke-linecap="round"/><path d="M110 99q12-13 24 0" fill="none" stroke="#2B2508" stroke-width="3" stroke-linecap="round"/>
     <path d="M95 112h10l-5 6z" fill="#2B2508"/>
     <path d="M100 118q-5 6-10 2m10-2q5 6 10 2" fill="none" stroke="#2B2508" stroke-width="2" stroke-linecap="round" stroke-opacity=".55" class="mouth"/>
     <path d="M62 108l-40-4m40 10-40 4m116-10 40-4m-40 10 40 4" fill="none" stroke="#2B2508" stroke-width="2" stroke-linecap="round" stroke-opacity=".55"/>
@@ -168,19 +187,22 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
   </g></g>
   
 </g>
+<g>
+  <path d="M54 196h92c-2 22-19 31-46 31s-44-9-46-31z" fill="#E8735A" stroke="#a8432c" stroke-width="2" stroke-linejoin="round"/>
+  <ellipse cx="100" cy="196" rx="46" ry="8" fill="#F4A38F" stroke="#a8432c" stroke-width="2"/>
+  <g fill="#8B5A2B"><circle cx="80" cy="195" r="3.2"/><circle cx="92" cy="193.5" r="3.2"/><circle cx="108" cy="193.5" r="3.2"/><circle cx="120" cy="195" r="3.2"/><circle cx="86" cy="198" r="3"/><circle cx="114" cy="198" r="3"/></g>
+</g>
 
 
 
-
-<path d="M150 186h66" stroke="#8B5A2B" stroke-width="4" stroke-linecap="round"/>
-<g class="cup"><path d="M178 160h22v22q0 4-4 4h-14q-4 0-4-4z" fill="#6FA8F5" stroke="#2f5fb0" stroke-width="1.5" stroke-linejoin="round"/><path d="M200 166q8 0 8 7t-8 7" fill="none" stroke="#2f5fb0" stroke-width="2"/></g>
-<g class="push"><ellipse fill="#F5D547" stroke="#9A7410" stroke-width="2" stroke-linejoin="round" cx="146" cy="176" rx="15" ry="10"/></g></g></g>
-  <switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">09:00 推一下杯子</text></g><g><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">09:00 Push the cup</text></g></switch>
+</g></g>
+  
+  <switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">中午 · 吃午餐</text></g><g><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">Noon · Lunch time</text></g></switch>
 </g>
 <g transform="translate(642 0)" class="p3">
   <clipPath id="clip-p3"><rect x="1" y="1" width="196" height="168" rx="10"/></clipPath>
-  <rect x="1" y="1" width="196" height="168" rx="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1.5"/>
-  <g clip-path="url(#clip-p3)"><g transform="translate(33 10) scale(.66)">
+  <rect x="1" y="1" width="196" height="168" rx="10" fill="#f6f8fa" stroke="#9A7410" stroke-width="2.5"/>
+  <g clip-path="url(#clip-p3)"><g transform="translate(33 10) scale(.66)"><ellipse cx="100" cy="214" rx="78" ry="14" fill="#E8A0B4" stroke="#b5587a" stroke-width="2"/>
 
 
 <g class="tail">
@@ -198,7 +220,7 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
     <path d="M58 70q12-12 30-16" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="4" stroke-linecap="round"/>
     <path d="M100 48q1-8 6-12" fill="none" stroke="#5a7a2a" stroke-width="2.5" stroke-linecap="round"/>
     <path d="M105 37c6-10 18-12 26-8-5 9-17 13-26 8z" fill="#6CBF4A" stroke="#9A7410" stroke-width="1.5" stroke-linejoin="round"/>
-    <g class="blink"><ellipse cx="78" cy="94" rx="13" ry="14" fill="#fffdf2"/><ellipse class="look" cx="78" cy="94" rx="4.5" ry="9.5" fill="#2B2508"/></g><g class="blink"><ellipse cx="122" cy="94" rx="13" ry="14" fill="#fffdf2"/><ellipse class="look" cx="122" cy="94" rx="4.5" ry="9.5" fill="#2B2508"/></g>
+    <g class=""><ellipse cx="78" cy="94" rx="13" ry="14" fill="#fffdf2"/><ellipse class="look" cx="78" cy="94" rx="4.5" ry="9.5" fill="#2B2508"/><path d="M64.5 94A13.5 14.5 0 0 1 91.5 94z" fill="#F5D547" stroke="#2B2508" stroke-width="2.5" stroke-linejoin="round"/></g><g class=""><ellipse cx="122" cy="94" rx="13" ry="14" fill="#fffdf2"/><ellipse class="look" cx="122" cy="94" rx="4.5" ry="9.5" fill="#2B2508"/><path d="M108.5 94A13.5 14.5 0 0 1 135.5 94z" fill="#F5D547" stroke="#2B2508" stroke-width="2.5" stroke-linejoin="round"/></g>
     <path d="M95 112h10l-5 6z" fill="#2B2508"/>
     <path d="M100 118q-5 6-10 2m10-2q5 6 10 2" fill="none" stroke="#2B2508" stroke-width="2" stroke-linecap="round" stroke-opacity=".55" class="mouth"/>
     <path d="M62 108l-40-4m40 10-40 4m116-10 40-4m-40 10 40 4" fill="none" stroke="#2B2508" stroke-width="2" stroke-linecap="round" stroke-opacity=".55"/>
@@ -209,10 +231,9 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 
 
 
-
-<rect x="42" y="148" width="116" height="66" rx="7" fill="#C5CCD6" stroke="#8A94A2" stroke-width="2"/>
-<ellipse cx="100" cy="182" rx="11" ry="8" fill="#F5D547" stroke="#9A7410" stroke-width="1.5"/><path d="M104 175q4-6 10-5-2 5-10 5z" fill="#6CBF4A"/>
-<path d="M30 214h140l-8 10H38z" fill="#AEB6C2" stroke="#8A94A2" stroke-width="2" stroke-linejoin="round"/></g></g>
-  <switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">10:00 開始寫 code</text></g><g><text x="99" y="192" text-anchor="middle" font-size="13" fill="#59636e">10:00 Time to code</text></g></switch>
+<g class="zzz" fill="#59636e" font-family="'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif" font-weight="700"><text x="156" y="62" font-size="18">z</text></g>
+</g></g>
+  <switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><rect x="10" y="10" width="40" height="20" rx="10" fill="#F5D547"/><text x="30" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="#2B2508">現在</text></g><g><rect x="10" y="10" width="42" height="20" rx="10" fill="#F5D547"/><text x="31" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="#2B2508">NOW</text></g></switch>
+  <switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><text x="99" y="192" text-anchor="middle" font-size="13" fill="#1f2328" font-weight="700">下午 · 打個盹</text></g><g><text x="99" y="192" text-anchor="middle" font-size="13" fill="#1f2328" font-weight="700">Afternoon · Quick nap</text></g></switch>
 </g>
 </svg>

@@ -3,18 +3,19 @@
 text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif}
 @media (prefers-reduced-motion:no-preference){
 .blink{transform-box:fill-box;transform-origin:center;animation:blink 6s infinite}
-.look{animation:look 9s ease-in-out infinite}
 .tail{transform-box:fill-box;transform-origin:0% 95%;animation:tail 2.4s ease-in-out infinite}
 .heart{animation:zzz 2.6s ease-in-out infinite}
-.breathe{transform-box:fill-box;transform-origin:50% 100%;--b:1.02;animation:breathe 4.4s ease-in-out infinite}
+.breathe{transform-box:fill-box;transform-origin:50% 100%}
 .head{transform-box:fill-box;transform-origin:50% 100%}
-.head{animation:nod 5.2s ease-in-out infinite}
 .yawn{transform-box:fill-box;transform-origin:50% 0%;animation:yawn 6s ease-in-out infinite}
 .zzz{animation:zzz 3.2s ease-in-out infinite}
 .packet{transform-box:fill-box;transform-origin:50% 0%;animation:sway 3s ease-in-out infinite}
 .moon{animation:glow 4s ease-in-out infinite}
 .flame{transform-box:fill-box;transform-origin:50% 100%;animation:flicker .5s ease-in-out infinite alternate}
 .conf{animation:fall 4s linear infinite}
+.look{animation:look 9s ease-in-out infinite}
+.breathe{--b:1.02;animation:breathe 4.4s ease-in-out infinite}
+.head{animation:nod 5.2s ease-in-out infinite}
 
 }
 .yawn{opacity:0}
