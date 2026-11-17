@@ -4,6 +4,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { FONT, POSES, TOYS, catCss, renderCat } from './cat.mjs';
 import { facts } from './facts.mjs';
 import { guestFor, renderGuest } from './guest.mjs';
+import { fetchMood, fetchWeather } from './data.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -48,16 +49,26 @@ const bodyFor = (date) => {
   return null;
 };
 
+const LOGIN = 'lemoncat0817';
+// 要顯示天氣時填 data.mjs 的 PLACES 裡的縣市名；留 null 就不抓天氣
+const WEATHER_PLACE = '高雄市';
+
 const pick = (name, auto) => (flag(name) === 'none' ? null : (flag(name) ?? auto));
 
 // 姿勢、配件、背景、訪客各一格，覆寫旗標讓任何狀態都能在本機單獨預覽
-export const resolveState = () => {
+export const resolveState = async () => {
   const tw = new Date(Date.now() + 8 * 3600_000);
   const date = flag('date') ?? tw.toISOString().slice(0, 10);
   const hour = Number(flag('hour') ?? tw.getUTCHours());
   const day = Number(flag('day') ?? Math.floor(Date.parse(date) / 86_400_000));
   const slot = flag('slot') ?? slotOf(hour);
-  const pose = flag('pose') ?? SLOT_POSE[slot];
+  const [mood, weather] = await Promise.all([
+    flag('mood') ?? fetchMood(LOGIN, date),
+    flag('weather') ?? fetchWeather(WEATHER_PLACE),
+  ]);
+  // 睡覺優先，其次是好幾天沒 commit 的無聊（生日當天例外），最後才看時段
+  const bored = mood === 'bored' && date.slice(5) !== BIRTHDAY;
+  const pose = flag('pose') ?? (slot === 'night' ? 'sleep' : bored ? 'bored' : SLOT_POSE[slot]);
   return {
     date,
     slot,
@@ -65,15 +76,16 @@ export const resolveState = () => {
     head: pick('head', headFor(date)),
     body: pick('body', bodyFor(date)),
     toy: flag('toy') ?? ['butterfly', 'wand', 'yarn'][((day % 3) + 3) % 3],
-    background: flag('background') ?? null,
+    mood: mood === 'none' ? null : mood,
+    weather: weather === 'none' ? null : weather,
     guest: pick('guest', guestFor(day)),
     fact: facts[((day % facts.length) + facts.length) % facts.length],
   };
 };
 
 const themes = {
-  light: { accent: '#F5D547', edge: '#9A7410', ink: '#2B2508', text: '#1f2328', muted: '#59636e', leaf: '#6CBF4A' },
-  dark: { accent: '#F5D547', edge: 'none', ink: '#2B2508', text: '#e6edf3', muted: '#9198a1', leaf: '#6CBF4A' },
+  light: { dark: false, accent: '#F5D547', edge: '#9A7410', ink: '#2B2508', text: '#1f2328', muted: '#59636e', leaf: '#6CBF4A' },
+  dark: { dark: true, accent: '#F5D547', edge: 'none', ink: '#2B2508', text: '#e6edf3', muted: '#9198a1', leaf: '#6CBF4A' },
 };
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
@@ -186,7 +198,7 @@ export const render = (state) => {
 };
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const state = resolveState();
+  const state = await resolveState();
   const outDir = flag('out') ? join(process.cwd(), flag('out')) : join(root, 'assets');
   mkdirSync(outDir, { recursive: true });
   for (const [file, svg] of Object.entries(render(state))) writeFileSync(join(outDir, file), svg);

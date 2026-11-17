@@ -1,3 +1,5 @@
+import { renderWeather, weatherCss } from './weather.mjs';
+
 export const FONT = "'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif";
 
 export const POSES = {
@@ -7,6 +9,7 @@ export const POSES = {
   eat: { status: '貓咪在吃午餐，別打擾', dot: 'green' },
   nap: { status: '貓咪午後打盹中', dot: 'muted' },
   chase: { status: '貓咪在追蝴蝶', dot: 'green' },
+  bored: { status: '好幾天沒有 commit，貓咪無聊到趴著', dot: 'muted' },
 };
 
 export const TOYS = {
@@ -35,6 +38,7 @@ const eyes = (c, pose) => {
     stretch: (cx) => happyEye(c, cx),
     eat: (cx) => happyEye(c, cx),
     nap: (cx) => openEye(c, cx, true),
+    bored: (cx) => openEye(c, cx, true),
   }[pose];
   return [78, 122].map((cx) => (draw ? draw(cx) : openEye(c, cx, false))).join('');
 };
@@ -157,7 +161,10 @@ const yarn = `<g class="yarn"><g class="ball">
   <path d="M-11-6q11 6 22 0M-12 2q12 7 24 0M-6-11q8 9 0 22" fill="none" stroke="#F4A3C0" stroke-width="1.6" stroke-linecap="round"/>
 </g></g>`;
 
-const extras = (c, pose, body, toy) => (body === 'cake' ? confetti : '') + extrasPose(c, pose, toy);
+const heart = `<g class="heart"><path transform="translate(34 36)" d="M0 5C-3-1-11 0-9 6c1 4 6 7 9 10 3-3 8-6 9-10 2-6-6-7-9-1z" fill="#E8588A" stroke="#a8325f" stroke-width="1.2"/></g>`;
+
+const extras = (c, pose, body, toy, mood) =>
+  (body === 'cake' ? confetti : '') + (mood === 'happy' && !['sleep', 'nap', 'bored'].includes(pose) ? heart : '') + extrasPose(c, pose, toy);
 
 const extrasPose = (c, pose, toy) => {
   if (pose === 'sleep') {
@@ -171,24 +178,34 @@ const extrasPose = (c, pose, toy) => {
 };
 
 export const renderCat = (c, state) => {
-  const { pose, head, body, toy } = state;
+  const { pose, head, body, toy, mood } = state;
+  const bored = pose === 'bored';
+  const night = state.slot === 'night' || state.slot === 'evening';
+  const weather = renderWeather(state.weather, night, c.dark, pose === 'chase' || body === 'moon');
   const fill = `fill="${c.accent}" stroke="${c.edge}" stroke-width="2" stroke-linejoin="round"`;
   const mouth = `<path d="M100 118q-5 6-10 2m10-2q5 6 10 2" fill="none" stroke="${c.ink}" stroke-width="2" stroke-linecap="round" stroke-opacity=".55" class="mouth"/>`;
   const yawn =
-    pose === 'stretch'
+    pose === 'stretch' || bored
       ? `<g class="yawn"><ellipse cx="100" cy="125" rx="7" ry="9" fill="${c.ink}"/><ellipse cx="100" cy="130" rx="4.5" ry="4" fill="#E8735A"/></g>`
       : '';
+  const tail = bored ? 'M150 210c26 2 40-6 36-20' : 'M140 204c38 2 48-28 32-50';
+  // 趴著時身體換成麵包形，頭往下移靠在前腳上
+  const torso = bored
+    ? `<path ${fill} d="M34 214c0-36 28-54 66-54s66 18 66 54z"/>`
+    : `<path ${fill} d="M58 214c-12-44 0-86 42-88 42 2 54 44 42 88z"/>
+  <path d="M100 164v50" stroke="${c.ink}" stroke-opacity=".25" stroke-width="2"/>
+  ${body === 'scarf' ? scarf : ''}`;
+  const paws = bored ? `<ellipse ${fill} cx="74" cy="212" rx="14" ry="8"/><ellipse ${fill} cx="126" cy="212" rx="14" ry="8"/>` : '';
   return `
+${weather.back}
 ${body === 'moon' ? moon : ''}
 <g class="tail">
-  <path d="M140 204c38 2 48-28 32-50" fill="none" stroke="${c.edge}" stroke-width="15" stroke-linecap="round"/>
-  <path d="M140 204c38 2 48-28 32-50" fill="none" stroke="${c.accent}" stroke-width="12" stroke-linecap="round"/>
+  <path d="${tail}" fill="none" stroke="${c.edge}" stroke-width="15" stroke-linecap="round"/>
+  <path d="${tail}" fill="none" stroke="${c.accent}" stroke-width="12" stroke-linecap="round"/>
 </g>
 <g class="breathe">
-  <path ${fill} d="M58 214c-12-44 0-86 42-88 42 2 54 44 42 88z"/>
-  <path d="M100 164v50" stroke="${c.ink}" stroke-opacity=".25" stroke-width="2"/>
-  ${body === 'scarf' ? scarf : ''}
-  <g class="head">
+  ${torso}
+  <g transform="translate(0 ${bored ? 46 : 0})"><g class="head">
     <path ${fill} d="M60 72 54 22l38 28zM140 72l6-50-38 28z"/>
     <path d="M62 62 59 36l18 13zM138 62l3-26-18 13z" fill="${c.ink}" fill-opacity=".18"/>
     <path ${fill} d="M30 96c6-3 13-7 18-13 8-24 30-36 52-36s44 12 52 36c5 6 12 10 18 13-6 3-13 7-18 13-8 24-30 36-52 36s-44-12-52-36c-5-6-12-10-18-13z"/>
@@ -200,15 +217,17 @@ ${body === 'moon' ? moon : ''}
     ${mouth}${yawn}
     <path d="M62 108l-40-4m40 10-40 4m116-10 40-4m-40 10 40 4" fill="none" stroke="${c.ink}" stroke-width="2" stroke-linecap="round" stroke-opacity=".55"/>
     ${headAccessory(c, head)}
-  </g>
+  </g></g>
+  ${paws}
 </g>
 ${pose === 'eat' && body !== 'cake' ? bowl : ''}
 ${{ redpacket, zongzi }[body] ?? ''}
 ${body === 'cake' ? cake(pose === 'eat') : ''}
-${extras(c, pose, body, toy)}`;
+${extras(c, pose, body, toy, mood)}
+${weather.front}`;
 };
 
-const BREATHE = { sleep: [4, 1.025], nap: [4.4, 1.02], eat: [3, 1.012] };
+const BREATHE = { sleep: [4, 1.025], nap: [4.4, 1.02], eat: [3, 1.012], bored: [5, 1.02] };
 
 export const catCss = (state) => {
   const { pose } = state;
@@ -238,7 +257,8 @@ export const catCss = (state) => {
   return `@media (prefers-reduced-motion:no-preference){
 .blink{transform-box:fill-box;transform-origin:center;animation:blink 6s infinite}
 .look{animation:${look}}
-.tail{transform-box:fill-box;transform-origin:0% 95%;animation:tail 5.3s ease-in-out infinite}
+.tail{transform-box:fill-box;transform-origin:0% 95%;animation:tail ${state.mood === 'happy' ? '2.4s' : '5.3s'} ease-in-out infinite}
+.heart{animation:zzz 2.6s ease-in-out infinite}
 .breathe{transform-box:fill-box;transform-origin:50% 100%;${body}}
 .head{transform-box:fill-box;transform-origin:50% 100%}
 ${head}
@@ -271,5 +291,6 @@ ${chase}
 @keyframes glow{0%,100%{opacity:.85}50%{opacity:1}}
 @keyframes fly{0%{transform:translate(168px,46px)}25%{transform:translate(192px,22px)}50%{transform:translate(182px,74px)}75%{transform:translate(150px,52px)}100%{transform:translate(168px,46px)}}
 @keyframes bob{from{transform:translateY(-3px)}to{transform:translateY(3px)}}
-@keyframes flap{from{transform:scaleX(1)}to{transform:scaleX(.25)}}`;
+@keyframes flap{from{transform:scaleX(1)}to{transform:scaleX(.25)}}
+${weatherCss}`;
 };

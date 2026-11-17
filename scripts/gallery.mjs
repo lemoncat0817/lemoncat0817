@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { render } from './build.mjs';
 import { BODY_ITEMS, HEAD_ITEMS, POSES, TOYS } from './cat.mjs';
 import { GUESTS } from './guest.mjs';
+import { WEATHERS } from './weather.mjs';
 import { facts } from './facts.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -15,6 +16,15 @@ const states = [
   ...Object.keys(POSES).map((pose) => ({ id: pose, pose })),
   ...Object.keys(TOYS).map((toy) => ({ id: `chase-${toy}`, pose: 'chase', toy })),
   ...Object.keys(GUESTS).map((guest) => ({ id: `guest-${guest}`, pose: 'idle', guest, trail: true })),
+  { id: 'mood-happy', pose: 'idle', mood: 'happy' },
+  { id: 'mood-bored', pose: 'bored', mood: 'bored' },
+  { id: 'bored-scarf-santa', pose: 'bored', head: 'santa', body: 'scarf' },
+  ...WEATHERS.map((weather) => ({ id: `weather-${weather}`, pose: 'idle', weather })),
+  ...WEATHERS.map((weather) => ({ id: `happy-${weather}`, pose: 'stretch', mood: 'happy', weather })),
+  ...Object.keys(TOYS).map((toy, i) => ({ id: `evening-${toy}`, pose: 'chase', slot: 'evening', mood: 'happy', toy, weather: ['partly', 'cloudy', 'rain'][i] })),
+  { id: 'moon-cloudy-evening', pose: 'chase', slot: 'evening', body: 'moon', head: 'maple', weather: 'cloudy', mood: 'happy' },
+  { id: 'weather-clear-night', pose: 'sleep', slot: 'night', weather: 'clear' },
+  { id: 'weather-rain-night', pose: 'sleep', slot: 'night', weather: 'rain' },
   ...HEAD_ITEMS.map((head) => ({ id: `head-${head}`, pose: 'idle', head })),
   ...BODY_ITEMS.map((body) => ({ id: `body-${body}`, pose: 'idle', body })),
   { id: 'winter-santa-scarf', pose: 'idle', head: 'santa', body: 'scarf' },
@@ -22,7 +32,7 @@ const states = [
   { id: 'birthday-eating', pose: 'eat', head: 'partyhat', body: 'cake' },
 ];
 
-const base = { toy: 'butterfly',  date: '2026-01-01', slot: 'morning', head: null, body: null, background: null, guest: null, fact: facts[0] };
+const base = { toy: 'butterfly',  date: '2026-01-01', slot: 'morning', head: null, body: null, mood: null, weather: null, guest: null, fact: facts[0] };
 const cells = states.map((s) => {
   const state = { ...base, ...s };
   mkdirSync(join(dir, s.id), { recursive: true });

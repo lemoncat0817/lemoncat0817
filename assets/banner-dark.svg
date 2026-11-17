@@ -5,6 +5,7 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 .blink{transform-box:fill-box;transform-origin:center;animation:blink 6s infinite}
 .look{animation:look 9s ease-in-out infinite}
 .tail{transform-box:fill-box;transform-origin:0% 95%;animation:tail 5.3s ease-in-out infinite}
+.heart{animation:zzz 2.6s ease-in-out infinite}
 .breathe{transform-box:fill-box;transform-origin:50% 100%;--b:1.012;animation:breathe 3s ease-in-out infinite}
 .head{transform-box:fill-box;transform-origin:50% 100%}
 .head{animation:chomp 5s ease-in-out infinite}
@@ -38,12 +39,28 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 @keyframes fly{0%{transform:translate(168px,46px)}25%{transform:translate(192px,22px)}50%{transform:translate(182px,74px)}75%{transform:translate(150px,52px)}100%{transform:translate(168px,46px)}}
 @keyframes bob{from{transform:translateY(-3px)}to{transform:translateY(3px)}}
 @keyframes flap{from{transform:scaleX(1)}to{transform:scaleX(.25)}}
+@media (prefers-reduced-motion:no-preference){
+.sun{animation:sunspin 24s linear infinite}
+.star{transform-box:fill-box;transform-origin:center;animation:twinkle 2.4s ease-in-out infinite}
+.cloud{animation:drift 9s ease-in-out infinite alternate}
+.cloud.slow{animation-duration:13s}
+.drop{animation:rain .9s linear infinite}
+.bolt{animation:bolt 5s steps(1) infinite}
+}
+.drop{opacity:0}
+@media (prefers-reduced-motion:reduce){.drop{opacity:1;transform:translateY(80px)}}
+@keyframes sunspin{to{transform:rotate(360deg)}}
+@keyframes twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+@keyframes drift{from{transform:translateX(-6px)}to{transform:translateX(6px)}}
+@keyframes rain{0%{transform:translateY(0);opacity:0}10%{opacity:1}100%{transform:translateY(230px);opacity:.8}}
+@keyframes bolt{0%,86%,92%,100%{opacity:0}88%,94%{opacity:1}}
 @media (prefers-reduced-motion:no-preference){.dot{animation:pulse 2.4s ease-in-out infinite}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 @keyframes type0{0%,7.50%{transform:scaleX(0);animation-timing-function:steps(22)}19.88%,93%{transform:scaleX(1)}94%,100%{transform:scaleX(0)}}
 #c0{transform-box:fill-box;transform-origin:left;animation:type0 16s infinite}
 </style>
 <g transform="translate(24 14) scale(1.02)">
+
 
 <g class="tail">
   <path d="M140 204c38 2 48-28 32-50" fill="none" stroke="none" stroke-width="15" stroke-linecap="round"/>
@@ -59,7 +76,7 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
   <path d="M114 168h22M113 180h24" stroke="#fff" stroke-opacity=".55" stroke-width="3"/>
   <path d="M112 194v8M118 194v10M124 194v8M130 194v10M136 194v8" stroke="#8f261c" stroke-width="2" stroke-linecap="round"/>
 </g>
-  <g class="head">
+  <g transform="translate(0 0)"><g class="head">
     <path fill="#F5D547" stroke="none" stroke-width="2" stroke-linejoin="round" d="M60 72 54 22l38 28zM140 72l6-50-38 28z"/>
     <path d="M62 62 59 36l18 13zM138 62l3-26-18 13z" fill="#2B2508" fill-opacity=".18"/>
     <path fill="#F5D547" stroke="none" stroke-width="2" stroke-linejoin="round" d="M30 96c6-3 13-7 18-13 8-24 30-36 52-36s44 12 52 36c5 6 12 10 18 13-6 3-13 7-18 13-8 24-30 36-52 36s-44-12-52-36c-5-6-12-10-18-13z"/>
@@ -71,13 +88,15 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
     <path d="M100 118q-5 6-10 2m10-2q5 6 10 2" fill="none" stroke="#2B2508" stroke-width="2" stroke-linecap="round" stroke-opacity=".55" class="mouth"/>
     <path d="M62 108l-40-4m40 10-40 4m116-10 40-4m-40 10 40 4" fill="none" stroke="#2B2508" stroke-width="2" stroke-linecap="round" stroke-opacity=".55"/>
     
-  </g>
+  </g></g>
+  
 </g>
 <g>
   <path d="M54 196h92c-2 22-19 31-46 31s-44-9-46-31z" fill="#E8735A" stroke="#a8432c" stroke-width="2" stroke-linejoin="round"/>
   <ellipse cx="100" cy="196" rx="46" ry="8" fill="#F4A38F" stroke="#a8432c" stroke-width="2"/>
   <g fill="#8B5A2B"><circle cx="80" cy="195" r="3.2"/><circle cx="92" cy="193.5" r="3.2"/><circle cx="108" cy="193.5" r="3.2"/><circle cx="120" cy="195" r="3.2"/><circle cx="86" cy="198" r="3"/><circle cx="114" cy="198" r="3"/></g>
 </g>
+
 
 
 </g>

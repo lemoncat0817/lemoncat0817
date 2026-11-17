@@ -21,6 +21,8 @@ jobs:
         with:
           node-version: 22
       - run: node scripts/build.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
