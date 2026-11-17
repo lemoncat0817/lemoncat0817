@@ -212,7 +212,7 @@ ${body === 'moon' ? moon : ''}
     <path d="M58 70q12-12 30-16" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="4" stroke-linecap="round"/>
     <path d="M100 48q1-8 6-12" fill="none" stroke="#5a7a2a" stroke-width="2.5" stroke-linecap="round"/>
     <path d="M105 37c6-10 18-12 26-8-5 9-17 13-26 8z" fill="${c.leaf}" stroke="${c.edge}" stroke-width="1.5" stroke-linejoin="round"/>
-    ${eyes(c, pose)}
+    ${eyes(c, state.eyes ?? pose)}
     <path d="M95 112h10l-5 6z" fill="${c.ink}"/>
     ${mouth}${yawn}
     <path d="M62 108l-40-4m40 10-40 4m116-10 40-4m-40 10 40 4" fill="none" stroke="${c.ink}" stroke-width="2" stroke-linecap="round" stroke-opacity=".55"/>

@@ -6,6 +6,7 @@ import { facts } from './facts.mjs';
 import { guestFor, renderGuest } from './guest.mjs';
 import { fetchCalendar, fetchWeather, moodOf } from './data.mjs';
 import { renderCalendar } from './calendar.mjs';
+import { renderComic } from './comic.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -194,6 +195,7 @@ export const render = (state) => {
   for (const name of Object.keys(themes)) {
     files[`banner-${name}.svg`] = banner(name, state);
     files[`trail-${name}.svg`] = trail(name, state);
+    files[`comic-${name}.svg`] = renderComic(name, themes[name]);
   }
   return files;
 };
