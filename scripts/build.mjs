@@ -7,6 +7,8 @@ import { guestFor, renderGuest } from './guest.mjs';
 import { fetchCalendar, fetchWeather, moodOf } from './data.mjs';
 import { renderCalendar } from './calendar.mjs';
 import { renderComic } from './comic.mjs';
+import { EVENTS, eventCss, eventFor, renderEvent } from './events.mjs';
+import { moonPhase } from './weather.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -79,6 +81,8 @@ export const resolveState = async () => {
     mood: mood === 'none' ? null : mood,
     calendar,
     weather: weather === 'none' ? null : weather,
+    moonPhase: moonPhase(Date.parse(`${date}T${String(hour).padStart(2, '0')}:00:00+08:00`)),
+    event: pick('event', eventFor(date, slot, weather === 'none' ? null : weather)),
     guest: pick('guest', guestFor(day)),
     fact: facts[((day % facts.length) + facts.length) % facts.length],
     factEn: factsEn[((day % factsEn.length) + factsEn.length) % factsEn.length],
@@ -141,7 +145,8 @@ const banner = (name, state) => {
         : state.head === 'partyhat'
           ? { zh: '今天是世界貓日', en: 'Happy International Cat Day' }
           : null;
-  const status = occasion ?? (state.pose === 'chase' ? TOYS[state.toy] : POSES[state.pose]);
+  const status = occasion ?? EVENTS[state.event] ?? (state.pose === 'chase' ? TOYS[state.toy] : POSES[state.pose]);
+  const event = renderEvent(state.event);
   const dot = POSES[state.pose].dot === 'muted' ? c.muted : '#3fb950';
   const line = (text) => `<text x="18" font-size="14" fill="${c.muted}">${esc(text)}</text>`;
   const label = (text, spacing) => `<text font-size="13" fill="${c.muted}" font-weight="700" y="-8" letter-spacing="${spacing}">${text}</text>`;
@@ -152,9 +157,11 @@ text{font-family:${FONT}}
 ${catCss(state)}
 @media (prefers-reduced-motion:no-preference){.dot{animation:pulse 2.4s ease-in-out infinite}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+${state.event ? eventCss : ''}
 ${[...zh, ...en].map((t) => t.css).join('\n')}
 </style>
-<g transform="translate(24 14) scale(1.02)">${renderCat(c, state)}</g>
+<g transform="translate(24 14) scale(1.02)">${event.back}${renderCat(c, state)}</g>
+${event.top}
 <g transform="translate(250 84)">
   ${bilingual(
     `<text font-size="40" font-weight="800" fill="${c.text}" y="0">檸檬貓 <tspan fill="${c.muted}" font-weight="500" font-size="26">Lemoncat</tspan></text>`,

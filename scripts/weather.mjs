@@ -12,8 +12,33 @@ const star = (x, y, s, d, fill) =>
   `<g transform="translate(${x} ${y}) scale(${s})"><path class="star" style="animation-delay:${d}s" d="M0-6 1.6-1.6 6 0 1.6 1.6 0 6-1.6 1.6-6 0-1.6-1.6z" fill="${fill}"/></g>`;
 
 // 淺色底上淡黃星星看不見，改用較深的金色
-const stars = (fill) =>
-  [star(-8, 22, 1.3, 0, fill), star(18, 2, 0.9, 0.8, fill), star(40, -2, 0.75, 1.6, fill), star(196, 8, 1, 0.4, fill), star(208, 50, 0.8, 1.2, fill)].join('');
+const stars = (fill, withMoon) =>
+  [
+    withMoon ? star(30, 2, 0.8, 0, fill) : star(-8, 22, 1.3, 0, fill),
+    star(withMoon ? 22 : 18, withMoon ? 38 : 2, 0.7, 0.8, fill),
+    star(40, -2, 0.75, 1.6, fill),
+    star(196, 8, 1, 0.4, fill),
+    star(208, 50, 0.8, 1.2, fill),
+  ].join('');
+
+// 以 2000-01-06 18:14 UTC 的新月為基準推算，0 是新月、0.5 是滿月
+export const moonPhase = (time) => {
+  const days = (time - Date.UTC(2000, 0, 6, 18, 14)) / 86_400_000;
+  return (((days / 29.530588853) % 1) + 1) % 1;
+};
+
+// 亮面由半圓加上明暗交界的半橢圓組成；上弦亮右邊，下弦亮左邊
+const moon = (phase, dark) => {
+  const r = 12;
+  const rx = Math.abs(Math.cos(phase * 2 * Math.PI)) * r;
+  const waxing = phase < 0.5;
+  const gibbous = phase > 0.25 && phase < 0.75;
+  const lit = waxing
+    ? `M0 -${r}A${r} ${r} 0 0 1 0 ${r}A${rx.toFixed(2)} ${r} 0 0 ${gibbous ? 1 : 0} 0 -${r}z`
+    : `M0 -${r}A${r} ${r} 0 0 0 0 ${r}A${rx.toFixed(2)} ${r} 0 0 ${gibbous ? 0 : 1} 0 -${r}z`;
+  const shadow = dark ? 'fill="#fff" fill-opacity=".1"' : 'fill="#000" fill-opacity=".07"';
+  return `<g transform="translate(2 18)"><circle r="${r}" ${shadow}/><path class="moonlit" d="${lit}" fill="#FFF1B8" stroke="#C9A227" stroke-width="1.2" stroke-linejoin="round"/></g>`;
+};
 
 const drops = Array.from({ length: 18 }, (_, i) => {
   const x = -12 + ((i * 47) % 224);
@@ -24,11 +49,12 @@ const drops = Array.from({ length: 18 }, (_, i) => {
 const bolt = `<path class="bolt" d="M10 30 1 50h8L2 70l16-26h-8l7-14z" fill="#FFD23F" stroke="#C99700" stroke-width="1"/>`;
 
 // crowded：貓右上方已有蝴蝶、逗貓棒或月亮時，不畫右側那朵雲
-export const renderWeather = (kind, night, dark, crowded) => {
+export const renderWeather = (kind, { night, dark, crowded, phase }) => {
   if (!kind) return { back: '', front: '' };
+  const showMoon = night && phase !== null;
   const light = dark ? ['#3A4250', '#5B6574'] : ['#EEF1F5', '#9AA4B1'];
   const grey = dark ? ['#2A303A', '#4A5260'] : ['#C5CCD6', '#8A94A2'];
-  const sky = night ? stars(dark ? '#FFE58A' : '#D49A00') : sun;
+  const sky = night ? (showMoon ? moon(phase, dark) : '') + stars(dark ? '#FFE58A' : '#D49A00', showMoon) : sun;
   const right = (colors) => (crowded ? '' : cloud(186, 10, 0.95, ...colors, 'cloud slow'));
   const back = {
     clear: sky,

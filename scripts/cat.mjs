@@ -186,7 +186,13 @@ export const renderCat = (c, state) => {
   const { pose, head, body, toy, mood } = state;
   const bored = pose === 'bored';
   const night = state.slot === 'night' || state.slot === 'evening';
-  const weather = renderWeather(state.weather, night, c.dark, pose === 'chase' || body === 'moon');
+  // 中秋已經有滿月造型，就不再畫月相
+  const weather = renderWeather(state.weather, {
+    night,
+    dark: c.dark,
+    crowded: pose === 'chase' || body === 'moon',
+    phase: body === 'moon' ? null : (state.moonPhase ?? null),
+  });
   const fill = `fill="${c.accent}" stroke="${c.edge}" stroke-width="2" stroke-linejoin="round"`;
   const mouth = `<path d="M100 118q-5 6-10 2m10-2q5 6 10 2" fill="none" stroke="${c.ink}" stroke-width="2" stroke-linecap="round" stroke-opacity=".55" class="mouth"/>`;
   const yawn =
