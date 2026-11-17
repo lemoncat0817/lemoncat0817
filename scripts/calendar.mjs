@@ -6,22 +6,31 @@ const GRID_Y = 58;
 const STAMP = 0.17;
 const CYCLE = 14;
 
+// 深色用半透明：GitHub 有好幾種深色主題（default、dimmed、high contrast），寫死色碼會在某些底色上消失
 const PALETTE = {
-  light: { empty: '#E4E7EB', levels: ['', '#EBCF6A', '#E2B92E', '#C99412', '#8F6A0A'], text: '#59636e' },
-  dark: { empty: '#21262D', levels: ['', '#5C4F1C', '#8F7A1F', '#C9A826', '#F5D547'], text: '#9198a1' },
+  light: {
+    empty: 'fill="#D8DDE3"',
+    levels: ['', 'fill="#EBCF6A"', 'fill="#E2B92E"', 'fill="#C99412"', 'fill="#8F6A0A"'],
+    text: '#59636e',
+  },
+  dark: {
+    empty: 'fill="#9198A1" fill-opacity=".3"',
+    levels: ['', 'fill="#F5D547" fill-opacity=".35"', 'fill="#F5D547" fill-opacity=".55"', 'fill="#F5D547" fill-opacity=".78"', 'fill="#F5D547"'],
+    text: '#9198a1',
+  },
 };
 
 const PAW = `<g id="paw"><path d="M0 0c-3 0-5.5 2.5-5.5 5s2 3 3.5 3c.8 0 1.4-.4 2-.4s1.2.4 2 .4c1.5 0 3.5-.5 3.5-3S3 0 0 0z"/><circle cx="-7" cy="-3" r="2.1"/><circle cx="-3" cy="-7.5" r="2.3"/><circle cx="3" cy="-7.5" r="2.3"/><circle cx="7" cy="-3" r="2.1"/></g>`;
 
 const paw = (fill, x, y, level) =>
-  `<use href="#paw" fill="${fill}" transform="translate(${x} ${y + 1}) rotate(90) scale(${0.46 + level * 0.06})"/>`;
+  `<use href="#paw" ${fill} transform="translate(${x} ${y + 1}) rotate(90) scale(${0.46 + level * 0.06})"/>`;
 
 // 仿 GitHub 的深淺圖例，色塊換成跟格子裡一樣的掌印
 const legend = (p, y) => {
   const right = X0 + 52 * STEP + 6;
   const swatch = (level, i) => {
     const x = right - 38 - (4 - i) * STEP;
-    return level ? paw(p.levels[level], x, y, level) : `<circle cx="${x}" cy="${y}" r="2" fill="${p.empty}"/>`;
+    return level ? paw(p.levels[level], x, y, level) : `<circle cx="${x}" cy="${y}" r="2" ${p.empty}/>`;
   };
   return `<g font-size="11" fill="${p.text}">
   <text x="${right - 38 - 4 * STEP - 9}" y="${y + 4}" text-anchor="end">Less</text>
@@ -39,7 +48,7 @@ export const renderCalendar = (name, state, edge) => {
       const cells = week
         .map((d) => {
           const y = GRID_Y + new Date(d.date).getUTCDay() * STEP;
-          if (!d.level) return `<circle cx="${x}" cy="${y}" r="2" fill="${p.empty}"/>`;
+          if (!d.level) return `<circle cx="${x}" cy="${y}" r="2" ${p.empty}/>`;
           return paw(p.levels[d.level], x, y, d.level);
         })
         .join('');
