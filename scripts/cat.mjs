@@ -240,7 +240,8 @@ ${weather.front}`;
 
 const BREATHE = { sleep: [4, 1.025], nap: [4.4, 1.02], eat: [3, 1.012], bored: [5, 1.02] };
 
-export const catCss = (state) => {
+// s 是選擇器前綴，讓同一張 SVG 裡的多隻貓各自套用自己姿勢的動畫
+export const poseCss = (state, s = '') => {
   const { pose } = state;
   const [dur, depth] = BREATHE[pose] ?? [3.6, 1.012];
   const body =
@@ -249,37 +250,42 @@ export const catCss = (state) => {
       : `--b:${depth};animation:breathe ${dur}s ease-in-out infinite`;
   const look = pose === 'chase' ? `lookchase ${{ wand: '3.2s', yarn: '4s' }[state.toy] ?? '4.5s'} ease-in-out infinite${state.toy === 'butterfly' ? '' : ' alternate'}` : 'look 9s ease-in-out infinite';
   const head =
-    pose === 'eat' ? '.head{animation:chomp 5s ease-in-out infinite}' : pose === 'nap' ? '.head{animation:nod 5.2s ease-in-out infinite}' : '';
+    pose === 'eat' ? `${s}.head{animation:chomp 5s ease-in-out infinite}` : pose === 'nap' ? `${s}.head{animation:nod 5.2s ease-in-out infinite}` : '';
   const chase =
     pose === 'chase'
       ? {
-          butterfly: `.bfly{animation:fly 6s ease-in-out infinite}
-.flutter{animation:bob .6s ease-in-out infinite alternate}
-.wing{transform-box:fill-box;animation:flap .22s ease-in-out infinite alternate}
-.wl{transform-origin:100% 50%}.wr{transform-origin:0% 50%}
-.head{animation:track 6s ease-in-out infinite}`,
-          wand: `.wand{transform-origin:190px -10px;animation:swing 3.2s ease-in-out infinite alternate}
-.head{animation:track 3.2s ease-in-out infinite alternate}`,
-          yarn: `.yarn{animation:roll 4s ease-in-out infinite alternate}
-.ball{animation:spin 4s ease-in-out infinite alternate}
-.head{animation:track 4s ease-in-out infinite alternate}`,
+          butterfly: `${s}.bfly{animation:fly 6s ease-in-out infinite}
+${s}.flutter{animation:bob .6s ease-in-out infinite alternate}
+${s}.wing{transform-box:fill-box;animation:flap .22s ease-in-out infinite alternate}
+${s}.wl{transform-origin:100% 50%}${s}.wr{transform-origin:0% 50%}
+${s}.head{animation:track 6s ease-in-out infinite}`,
+          wand: `${s}.wand{transform-origin:190px -10px;animation:swing 3.2s ease-in-out infinite alternate}
+${s}.head{animation:track 3.2s ease-in-out infinite alternate}`,
+          yarn: `${s}.yarn{animation:roll 4s ease-in-out infinite alternate}
+${s}.ball{animation:spin 4s ease-in-out infinite alternate}
+${s}.head{animation:track 4s ease-in-out infinite alternate}`,
         }[state.toy] ?? ''
       : '';
+  return `${s}.look{animation:${look}}
+${s}.breathe{${body}}
+${head}
+${chase}`;
+};
+
+export const catCss = (state) => {
   return `@media (prefers-reduced-motion:no-preference){
 .blink{transform-box:fill-box;transform-origin:center;animation:blink 6s infinite}
-.look{animation:${look}}
 .tail{transform-box:fill-box;transform-origin:0% 95%;animation:tail ${state.mood === 'happy' ? '2.4s' : '5.3s'} ease-in-out infinite}
 .heart{animation:zzz 2.6s ease-in-out infinite}
-.breathe{transform-box:fill-box;transform-origin:50% 100%;${body}}
+.breathe{transform-box:fill-box;transform-origin:50% 100%}
 .head{transform-box:fill-box;transform-origin:50% 100%}
-${head}
 .yawn{transform-box:fill-box;transform-origin:50% 0%;animation:yawn 6s ease-in-out infinite}
 .zzz{animation:zzz 3.2s ease-in-out infinite}
 .packet{transform-box:fill-box;transform-origin:50% 0%;animation:sway 3s ease-in-out infinite}
 .moon{animation:glow 4s ease-in-out infinite}
 .flame{transform-box:fill-box;transform-origin:50% 100%;animation:flicker .5s ease-in-out infinite alternate}
 .conf{animation:fall 4s linear infinite}
-${chase}
+${poseCss(state)}
 }
 .yawn{opacity:0}
 @keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}

@@ -16,5 +16,5 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/comic-dark.svg">
-  <img src="assets/comic-light.svg" alt="A day of Lemoncat" width="840">
+  <img src="assets/comic-light.svg" alt="Lemoncat's day so far" width="840">
 </picture>

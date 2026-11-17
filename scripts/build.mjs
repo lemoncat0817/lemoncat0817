@@ -14,7 +14,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const flag = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.split('=')[1];
 
-// 一天五個時段，與 workflow 的五次排程對齊（台灣時間 00/06/11/14/18 點）
+// 一天五個時段，台灣時間 00/06/11/14/18 點切換
 const slotOf = (hour) => (hour < 6 ? 'night' : hour < 11 ? 'morning' : hour < 14 ? 'noon' : hour < 18 ? 'afternoon' : 'evening');
 const SLOT_POSE = { night: 'sleep', morning: 'stretch', noon: 'eat', afternoon: 'nap', evening: 'chase' };
 
@@ -216,7 +216,7 @@ export const render = (state) => {
   for (const name of Object.keys(themes)) {
     files[`banner-${name}.svg`] = banner(name, state);
     files[`trail-${name}.svg`] = trail(name, state);
-    files[`comic-${name}.svg`] = renderComic(name, themes[name]);
+    files[`comic-${name}.svg`] = renderComic(name, themes[name], state);
   }
   return files;
 };
