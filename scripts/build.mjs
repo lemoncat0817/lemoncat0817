@@ -1,8 +1,9 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { FONT, POSES, catCss, renderCat } from './cat.mjs';
+import { FONT, POSES, TOYS, catCss, renderCat } from './cat.mjs';
 import { facts } from './facts.mjs';
+import { guestFor, renderGuest } from './guest.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -63,8 +64,9 @@ export const resolveState = () => {
     pose,
     head: pick('head', headFor(date)),
     body: pick('body', bodyFor(date)),
+    toy: flag('toy') ?? ['butterfly', 'wand', 'yarn'][((day % 3) + 3) % 3],
     background: flag('background') ?? null,
-    guest: flag('guest') ?? null,
+    guest: pick('guest', guestFor(day)),
     fact: facts[((day % facts.length) + facts.length) % facts.length],
   };
 };
@@ -116,7 +118,7 @@ const banner = (name, state) => {
 
   const occasion =
     state.pose === 'sleep' ? null : state.body === 'cake' ? '今天是檸檬貓的生日，一起吃蛋糕' : state.head === 'partyhat' ? '今天是世界貓日' : null;
-  const status = occasion ?? POSES[state.pose].status;
+  const status = occasion ?? (state.pose === 'chase' ? TOYS[state.toy] : POSES[state.pose].status);
   const dot = POSES[state.pose].dot === 'muted' ? c.muted : '#3fb950';
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="250" viewBox="0 0 840 250" role="img" aria-label="Lemoncat 檸檬貓：網頁工程師。今日冷知識：${esc(fact)}">
@@ -145,17 +147,32 @@ const paw = (c, x, y, flip, delay) =>
   `<path d="M12 13c-3 0-5.5 2.5-5.5 5s2 3 3.5 3c.8 0 1.4-.4 2-.4s1.2.4 2 .4c1.5 0 3.5-.5 3.5-3s-2.5-5-5.5-5z" transform="translate(-12 -13)${flip ? ' scale(1 -1) translate(0 -26)' : ''}"/>` +
   `<g transform="translate(-12 -13)${flip ? ' scale(1 -1) translate(0 -26)' : ''}"><circle cx="5" cy="10" r="2.1"/><circle cx="9" cy="5.5" r="2.3"/><circle cx="15" cy="5.5" r="2.3"/><circle cx="19" cy="10" r="2.1"/></g></g></g>`;
 
-const trail = (name) => {
+const trail = (name, state) => {
   const c = themes[name];
+  const edge = name === 'light' ? '#5b5f6a' : '#9aa1ad';
   const count = 16;
-  const paws = Array.from({ length: count }, (_, i) => paw(c, 40 + i * 50, i % 2 ? 31 : 13, i % 2, (i * 0.32).toFixed(2))).join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="44" viewBox="0 0 840 44" aria-hidden="true">
+  const paws = Array.from({ length: count }, (_, i) => paw(c, 40 + i * 50, i % 2 ? 50 : 32, i % 2, (i * 0.32).toFixed(2))).join('');
+  // 小貓比腳印領先約一格；貓與腳印同為 10 秒一輪，貓走完後留白一陣子
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="64" viewBox="0 0 840 64" aria-hidden="true">
 <style>
 .p{opacity:0}
-@media (prefers-reduced-motion:no-preference){.p{animation:step 7s ease-in-out infinite}}
+.guest{opacity:0}
+@media (prefers-reduced-motion:no-preference){
+.p{animation:step 10s ease-in-out infinite}
+.guest{animation:walk 10s linear infinite}
+.gbob{animation:gbob .3s ease-in-out infinite alternate}
+.gtail{transform-box:fill-box;transform-origin:100% 100%;animation:gwag 1.2s ease-in-out infinite alternate}
+.la,.lb{transform-box:fill-box;transform-origin:50% 0%}
+.la{animation:gstep .3s ease-in-out infinite alternate}
+.lb{animation:gstep .3s ease-in-out infinite alternate-reverse}
+}
 @media (prefers-reduced-motion:reduce){.p{opacity:.8}}
-@keyframes step{0%,4%{opacity:0}10%,72%{opacity:.9}95%,100%{opacity:0}}
-</style>${paws}</svg>
+@keyframes step{0%,3%{opacity:0}6%,70%{opacity:.9}92%,100%{opacity:0}}
+@keyframes walk{0%{transform:translate(30px,58px);opacity:1}56%{transform:translate(900px,58px);opacity:1}56.1%,100%{transform:translate(900px,58px);opacity:0}}
+@keyframes gbob{from{transform:translateY(0)}to{transform:translateY(-1.6px)}}
+@keyframes gwag{from{transform:rotate(-8deg)}to{transform:rotate(10deg)}}
+@keyframes gstep{from{transform:rotate(-24deg)}to{transform:rotate(24deg)}}
+</style>${paws}${state.guest ? renderGuest(state.guest, edge) : ''}</svg>
 `;
 };
 
@@ -163,7 +180,7 @@ export const render = (state) => {
   const files = {};
   for (const name of Object.keys(themes)) {
     files[`banner-${name}.svg`] = banner(name, state);
-    files[`trail-${name}.svg`] = trail(name);
+    files[`trail-${name}.svg`] = trail(name, state);
   }
   return files;
 };

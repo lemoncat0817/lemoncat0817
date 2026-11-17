@@ -9,6 +9,12 @@ export const POSES = {
   chase: { status: '貓咪在追蝴蝶', dot: 'green' },
 };
 
+export const TOYS = {
+  butterfly: '貓咪在追蝴蝶',
+  wand: '貓咪盯著逗貓棒',
+  yarn: '貓咪在玩毛線球',
+};
+
 export const HEAD_ITEMS = ['santa', 'pumpkin', 'partyhat', 'sunglasses', 'flowers', 'maple'];
 export const BODY_ITEMS = ['scarf', 'redpacket', 'moon', 'zongzi', 'cake'];
 
@@ -140,24 +146,32 @@ const butterfly = (c) => `<g class="bfly"><g class="flutter">
   <rect x="-1.2" y="-7" width="2.4" height="15" rx="1.2" fill="#2B2508"/>
 </g></g>`;
 
-const extras = (c, pose, body) => {
-  if (body === 'cake') return confetti + extrasPose(c, pose);
-  return extrasPose(c, pose);
-};
+const wand = `<g class="wand">
+  <path d="M190-10v78" stroke="#8B5A2B" stroke-width="3" stroke-linecap="round"/>
+  <path d="M190 68q-9 8-6 18M190 68q0 10 0 20M190 68q9 8 6 18" fill="none" stroke="#E8588A" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="190" cy="68" r="3" fill="#FFD23F"/>
+</g>`;
 
-const extrasPose = (c, pose) => {
+const yarn = `<g class="yarn"><g class="ball">
+  <circle r="13" fill="#E8588A" stroke="#a8325f" stroke-width="1.5"/>
+  <path d="M-11-6q11 6 22 0M-12 2q12 7 24 0M-6-11q8 9 0 22" fill="none" stroke="#F4A3C0" stroke-width="1.6" stroke-linecap="round"/>
+</g></g>`;
+
+const extras = (c, pose, body, toy) => (body === 'cake' ? confetti : '') + extrasPose(c, pose, toy);
+
+const extrasPose = (c, pose, toy) => {
   if (pose === 'sleep') {
     return `<g class="zzz" fill="${c.muted}" font-family="${FONT}" font-weight="700"><text x="158" y="60" font-size="22">Z</text><text x="176" y="38" font-size="16">z</text></g>`;
   }
   if (pose === 'nap') {
     return `<g class="zzz" fill="${c.muted}" font-family="${FONT}" font-weight="700"><text x="156" y="62" font-size="18">z</text></g>`;
   }
-  if (pose === 'chase') return butterfly(c);
+  if (pose === 'chase') return { butterfly: butterfly(c), wand, yarn }[toy] ?? '';
   return '';
 };
 
 export const renderCat = (c, state) => {
-  const { pose, head, body } = state;
+  const { pose, head, body, toy } = state;
   const fill = `fill="${c.accent}" stroke="${c.edge}" stroke-width="2" stroke-linejoin="round"`;
   const mouth = `<path d="M100 118q-5 6-10 2m10-2q5 6 10 2" fill="none" stroke="${c.ink}" stroke-width="2" stroke-linecap="round" stroke-opacity=".55" class="mouth"/>`;
   const yawn =
@@ -191,7 +205,7 @@ ${body === 'moon' ? moon : ''}
 ${pose === 'eat' && body !== 'cake' ? bowl : ''}
 ${{ redpacket, zongzi }[body] ?? ''}
 ${body === 'cake' ? cake(pose === 'eat') : ''}
-${extras(c, pose, body)}`;
+${extras(c, pose, body, toy)}`;
 };
 
 const BREATHE = { sleep: [4, 1.025], nap: [4.4, 1.02], eat: [3, 1.012] };
@@ -203,16 +217,23 @@ export const catCss = (state) => {
     pose === 'stretch'
       ? 'animation:stretch 6s ease-in-out infinite'
       : `--b:${depth};animation:breathe ${dur}s ease-in-out infinite`;
-  const look = pose === 'chase' ? 'lookchase 4.5s ease-in-out infinite' : 'look 9s ease-in-out infinite';
+  const look = pose === 'chase' ? `lookchase ${{ wand: '3.2s', yarn: '4s' }[state.toy] ?? '4.5s'} ease-in-out infinite${state.toy === 'butterfly' ? '' : ' alternate'}` : 'look 9s ease-in-out infinite';
   const head =
     pose === 'eat' ? '.head{animation:chomp 5s ease-in-out infinite}' : pose === 'nap' ? '.head{animation:nod 5.2s ease-in-out infinite}' : '';
   const chase =
     pose === 'chase'
-      ? `.bfly{animation:fly 6s ease-in-out infinite}
+      ? {
+          butterfly: `.bfly{animation:fly 6s ease-in-out infinite}
 .flutter{animation:bob .6s ease-in-out infinite alternate}
 .wing{transform-box:fill-box;animation:flap .22s ease-in-out infinite alternate}
 .wl{transform-origin:100% 50%}.wr{transform-origin:0% 50%}
-.head{animation:track 6s ease-in-out infinite}`
+.head{animation:track 6s ease-in-out infinite}`,
+          wand: `.wand{transform-origin:190px -10px;animation:swing 3.2s ease-in-out infinite alternate}
+.head{animation:track 3.2s ease-in-out infinite alternate}`,
+          yarn: `.yarn{animation:roll 4s ease-in-out infinite alternate}
+.ball{animation:spin 4s ease-in-out infinite alternate}
+.head{animation:track 4s ease-in-out infinite alternate}`,
+        }[state.toy] ?? ''
       : '';
   return `@media (prefers-reduced-motion:no-preference){
 .blink{transform-box:fill-box;transform-origin:center;animation:blink 6s infinite}
@@ -242,6 +263,9 @@ ${chase}
 @keyframes track{0%,100%{transform:rotate(3deg)}25%{transform:rotate(5deg)}50%{transform:rotate(1deg)}75%{transform:rotate(2deg)}}
 @keyframes zzz{0%{opacity:0;transform:translateY(8px)}30%,70%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
 @keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg)}}
+@keyframes swing{from{transform:rotate(-12deg)}to{transform:rotate(28deg)}}
+@keyframes roll{from{transform:translate(150px,206px)}to{transform:translate(198px,206px)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(320deg)}}
 @keyframes flicker{from{transform:scale(1,1) rotate(-4deg)}to{transform:scale(.85,1.12) rotate(4deg)}}
 @keyframes fall{0%{transform:translateY(-30px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(240px) rotate(300deg);opacity:1}}
 @keyframes glow{0%,100%{opacity:.85}50%{opacity:1}}
