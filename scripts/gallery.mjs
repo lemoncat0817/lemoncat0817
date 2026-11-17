@@ -12,10 +12,26 @@ const dir = join(root, 'gallery');
 rmSync(dir, { recursive: true, force: true });
 
 // 新增姿勢、配件、背景、訪客時，把狀態加進這份清單就會出現在圖鑑
+// 圖鑑用固定的假貢獻資料，不必連網也能看貢獻圖
+let seed = 7;
+const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+const sample = {
+  total: 0,
+  weeks: Array.from({ length: 53 }, (_, w) =>
+    Array.from({ length: 7 }, (_, d) => {
+      const r = rand();
+      const level = r < 0.45 ? 0 : r < 0.65 ? 1 : r < 0.8 ? 2 : r < 0.92 ? 3 : 4;
+      return { date: new Date(Date.UTC(2025, 10, 16 + w * 7 + d)).toISOString().slice(0, 10), count: level * 3, level };
+    }),
+  ),
+};
+sample.total = sample.weeks.flat().reduce((s, d) => s + d.count, 0);
+
 const states = [
   ...Object.keys(POSES).map((pose) => ({ id: pose, pose })),
   ...Object.keys(TOYS).map((toy) => ({ id: `chase-${toy}`, pose: 'chase', toy })),
-  ...Object.keys(GUESTS).map((guest) => ({ id: `guest-${guest}`, pose: 'idle', guest, trail: true })),
+  ...Object.keys(GUESTS).map((guest) => ({ id: `guest-${guest}`, pose: 'idle', guest, calendar: sample, trail: true })),
+  { id: 'trail-fallback', pose: 'idle', guest: 'black', trail: true },
   { id: 'mood-happy', pose: 'idle', mood: 'happy' },
   { id: 'mood-bored', pose: 'bored', mood: 'bored' },
   { id: 'bored-scarf-santa', pose: 'bored', head: 'santa', body: 'scarf' },
@@ -48,7 +64,7 @@ writeFileSync(
 h2{margin:8px 0 4px;color:#fff;font-size:14px}.row{display:flex;gap:4px}
 .row a{display:block;width:250px;height:270px;overflow:hidden;border-radius:6px}.light{background:#fff}.dark{background:#0d1117}
 img{display:block;width:840px;height:250px;margin-top:10px}
-.wide{width:100%}.wide .row{flex-direction:column}.wide .row a{width:840px;height:64px}.wide img{margin:0;height:64px}</style>
+.wide{width:100%}.wide .row{flex-direction:column}.wide .row a{width:840px;height:auto}.wide img{margin:0;height:auto}</style>
 ${cells.join('\n')}`,
 );
 console.log(`gallery/index.html：${states.length} 個狀態`);

@@ -4,7 +4,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { FONT, POSES, TOYS, catCss, renderCat } from './cat.mjs';
 import { facts } from './facts.mjs';
 import { guestFor, renderGuest } from './guest.mjs';
-import { fetchMood, fetchWeather } from './data.mjs';
+import { fetchCalendar, fetchWeather, moodOf } from './data.mjs';
+import { renderCalendar } from './calendar.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -62,10 +63,8 @@ export const resolveState = async () => {
   const hour = Number(flag('hour') ?? tw.getUTCHours());
   const day = Number(flag('day') ?? Math.floor(Date.parse(date) / 86_400_000));
   const slot = flag('slot') ?? slotOf(hour);
-  const [mood, weather] = await Promise.all([
-    flag('mood') ?? fetchMood(LOGIN, date),
-    flag('weather') ?? fetchWeather(WEATHER_PLACE),
-  ]);
+  const [calendar, weather] = await Promise.all([fetchCalendar(LOGIN), flag('weather') ?? fetchWeather(WEATHER_PLACE)]);
+  const mood = flag('mood') ?? moodOf(calendar, date);
   // 睡覺優先，其次是好幾天沒 commit 的無聊（生日當天例外），最後才看時段
   const bored = mood === 'bored' && date.slice(5) !== BIRTHDAY;
   const pose = flag('pose') ?? (slot === 'night' ? 'sleep' : bored ? 'bored' : SLOT_POSE[slot]);
@@ -77,6 +76,7 @@ export const resolveState = async () => {
     body: pick('body', bodyFor(date)),
     toy: flag('toy') ?? ['butterfly', 'wand', 'yarn'][((day % 3) + 3) % 3],
     mood: mood === 'none' ? null : mood,
+    calendar,
     weather: weather === 'none' ? null : weather,
     guest: pick('guest', guestFor(day)),
     fact: facts[((day % facts.length) + facts.length) % facts.length],
@@ -162,6 +162,7 @@ const paw = (c, x, y, flip, delay) =>
 const trail = (name, state) => {
   const c = themes[name];
   const edge = name === 'light' ? '#5b5f6a' : '#9aa1ad';
+  if (state.calendar) return renderCalendar(name, state, edge);
   const count = 16;
   const paws = Array.from({ length: count }, (_, i) => paw(c, 40 + i * 50, i % 2 ? 50 : 32, i % 2, (i * 0.32).toFixed(2))).join('');
   // 小貓比腳印領先約一格；貓與腳印同為 10 秒一輪，貓走完後留白一陣子
@@ -202,5 +203,5 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const outDir = flag('out') ? join(process.cwd(), flag('out')) : join(root, 'assets');
   mkdirSync(outDir, { recursive: true });
   for (const [file, svg] of Object.entries(render(state))) writeFileSync(join(outDir, file), svg);
-  console.log(JSON.stringify(state));
+  console.log(JSON.stringify({ ...state, calendar: state.calendar && `${state.calendar.weeks.length} weeks, ${state.calendar.total} total` }));
 }

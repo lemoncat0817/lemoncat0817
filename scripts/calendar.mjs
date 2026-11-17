@@ -1,0 +1,83 @@
+import { renderGuest } from './guest.mjs';
+
+const STEP = 15;
+const X0 = 26;
+const GRID_Y = 58;
+const STAMP = 0.17;
+const CYCLE = 14;
+
+const PALETTE = {
+  light: { empty: '#E4E7EB', levels: ['', '#EBCF6A', '#E2B92E', '#C99412', '#8F6A0A'], text: '#59636e' },
+  dark: { empty: '#21262D', levels: ['', '#5C4F1C', '#8F7A1F', '#C9A826', '#F5D547'], text: '#9198a1' },
+};
+
+const PAW = `<g id="paw"><path d="M0 0c-3 0-5.5 2.5-5.5 5s2 3 3.5 3c.8 0 1.4-.4 2-.4s1.2.4 2 .4c1.5 0 3.5-.5 3.5-3S3 0 0 0z"/><circle cx="-7" cy="-3" r="2.1"/><circle cx="-3" cy="-7.5" r="2.3"/><circle cx="3" cy="-7.5" r="2.3"/><circle cx="7" cy="-3" r="2.1"/></g>`;
+
+const paw = (fill, x, y, level) =>
+  `<use href="#paw" fill="${fill}" transform="translate(${x} ${y + 1}) rotate(90) scale(${0.46 + level * 0.06})"/>`;
+
+// 仿 GitHub 的深淺圖例，色塊換成跟格子裡一樣的掌印
+const legend = (p, y) => {
+  const right = X0 + 52 * STEP + 6;
+  const swatch = (level, i) => {
+    const x = right - 38 - (4 - i) * STEP;
+    return level ? paw(p.levels[level], x, y, level) : `<circle cx="${x}" cy="${y}" r="2" fill="${p.empty}"/>`;
+  };
+  return `<g font-size="11" fill="${p.text}">
+  <text x="${right - 38 - 4 * STEP - 9}" y="${y + 4}" text-anchor="end">Less</text>
+  ${[0, 1, 2, 3, 4].map(swatch).join('')}
+  <text x="${right}" y="${y + 4}" text-anchor="end">More</text>
+</g>`;
+};
+
+export const renderCalendar = (name, state, edge) => {
+  const p = PALETTE[name];
+  const { weeks, total } = state.calendar;
+  const columns = weeks
+    .map((week, i) => {
+      const x = X0 + i * STEP;
+      const cells = week
+        .map((d) => {
+          const y = GRID_Y + new Date(d.date).getUTCDay() * STEP;
+          if (!d.level) return `<circle cx="${x}" cy="${y}" r="2" fill="${p.empty}"/>`;
+          return paw(p.levels[d.level], x, y, d.level);
+        })
+        .join('');
+      return `<g class="col" style="animation-delay:${(i * STAMP).toFixed(2)}s">${cells}</g>`;
+    })
+    .join('');
+
+  const walk = weeks.length * STAMP;
+  const end = ((walk / CYCLE) * 100).toFixed(1);
+  const from = X0 + 22;
+  const to = from + weeks.length * STEP;
+  const height = GRID_Y + 7 * STEP + 16;
+
+  // 貓比正在蓋章的那一欄領先約一格半；掌印留一陣子再淡出，跟下一輪自然銜接
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="${height}" viewBox="0 0 840 ${height}" role="img" aria-label="過去一年 ${total} 次貢獻">
+<defs>${PAW}</defs>
+<style>
+text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif}
+.guest{opacity:0}
+@media (prefers-reduced-motion:no-preference){
+.col{animation:stamp ${CYCLE}s ease-out infinite both}
+.guest{animation:walk ${CYCLE}s linear infinite}
+.gbob{animation:gbob .3s ease-in-out infinite alternate}
+.gtail{transform-box:fill-box;transform-origin:100% 100%;animation:gwag 1.2s ease-in-out infinite alternate}
+.la,.lb{transform-box:fill-box;transform-origin:50% 0%}
+.la{animation:gstep .3s ease-in-out infinite alternate}
+.lb{animation:gstep .3s ease-in-out infinite alternate-reverse}
+}
+.col{transform-box:fill-box;transform-origin:50% 50%}
+@keyframes stamp{0%{opacity:0;transform:scaleY(.6)}2%{opacity:1;transform:scaleY(1.08)}4%,78%{opacity:1;transform:scaleY(1)}88%,100%{opacity:0;transform:scaleY(1)}}
+@keyframes walk{0%{transform:translate(${from}px,48px) scale(.85);opacity:1}${end}%{transform:translate(${to}px,48px) scale(.85);opacity:1}${(+end + 0.1).toFixed(1)}%,100%{transform:translate(${to}px,48px) scale(.85);opacity:0}}
+@keyframes gbob{from{transform:translateY(0)}to{transform:translateY(-1.6px)}}
+@keyframes gwag{from{transform:rotate(-8deg)}to{transform:rotate(10deg)}}
+@keyframes gstep{from{transform:rotate(-24deg)}to{transform:rotate(24deg)}}
+</style>
+${columns}
+${state.guest ? renderGuest(state.guest, edge) : ''}
+${legend(p, height - 9)}
+</svg>
+`;
+};

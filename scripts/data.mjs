@@ -4,27 +4,37 @@ const get = async (url, init = {}) => {
   return res.json();
 };
 
-// 任何失敗都回 null，橫幅退回沒有心情、沒有天氣的樣子，build 不會因此中斷
-export const fetchMood = async (login, today) => {
+const LEVELS = { NONE: 0, FIRST_QUARTILE: 1, SECOND_QUARTILE: 2, THIRD_QUARTILE: 3, FOURTH_QUARTILE: 4 };
+
+// 任何失敗都回 null，橫幅退回沒有心情、沒有貢獻圖的樣子，build 不會因此中斷
+export const fetchCalendar = async (login) => {
   const token = process.env.GITHUB_TOKEN;
   if (!token) return null;
   try {
-    const query = `query($login:String!){user(login:$login){contributionsCollection{contributionCalendar{weeks{contributionDays{date contributionCount}}}}}}`;
+    const query = `query($login:String!){user(login:$login){contributionsCollection{contributionCalendar{totalContributions weeks{contributionDays{date contributionCount contributionLevel}}}}}}`;
     const json = await get('https://api.github.com/graphql', {
       method: 'POST',
       headers: { Authorization: `bearer ${token}`, 'Content-Type': 'application/json', 'User-Agent': 'profile-readme-builder' },
       body: JSON.stringify({ query, variables: { login } }),
     });
-    const days = json.data.user.contributionsCollection.contributionCalendar.weeks.flatMap((w) => w.contributionDays);
-    const last = days.filter((d) => d.contributionCount > 0 && d.date <= today).at(-1)?.date;
-    if (!last) return 'bored';
-    // 貢獻日曆以 UTC 切日，跟台灣差 8 小時，所以「今天或昨天有貢獻」都算開心
-    const gap = (Date.parse(today) - Date.parse(last)) / 86_400_000;
-    return gap <= 1 ? 'happy' : gap >= 7 ? 'bored' : 'normal';
+    const cal = json.data.user.contributionsCollection.contributionCalendar;
+    return {
+      total: cal.totalContributions,
+      weeks: cal.weeks.map((w) => w.contributionDays.map((d) => ({ date: d.date, count: d.contributionCount, level: LEVELS[d.contributionLevel] ?? 0 }))),
+    };
   } catch (error) {
-    console.warn(`mood: ${error.message}`);
+    console.warn(`calendar: ${error.message}`);
     return null;
   }
+};
+
+export const moodOf = (calendar, today) => {
+  if (!calendar) return null;
+  const last = calendar.weeks.flat().filter((d) => d.count > 0 && d.date <= today).at(-1)?.date;
+  if (!last) return 'bored';
+  // 貢獻日曆以 UTC 切日，跟台灣差 8 小時，所以「今天或昨天有貢獻」都算開心
+  const gap = (Date.parse(today) - Date.parse(last)) / 86_400_000;
+  return gap <= 1 ? 'happy' : gap >= 7 ? 'bored' : 'normal';
 };
 
 export const PLACES = {
