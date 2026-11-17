@@ -11,6 +11,9 @@ export const POSES = {
   idle: { zh: '貓咪醒著，正在巡視 commit', en: 'The cat is up, patrolling the commits', dot: 'green' },
   sleep: { zh: '貓咪睡覺中，請輕聲細語', en: 'The cat is asleep. Please keep it down', dot: 'muted' },
   stretch: { zh: '貓咪伸懶腰，早安', en: 'The cat is stretching. Good morning', dot: 'green' },
+  wash: { zh: '貓咪在洗臉，整理儀容中', en: 'The cat is washing its face', dot: 'green' },
+  push: { zh: '貓咪盯上桌邊的杯子', en: 'The cat has its eye on the cup by the edge', dot: 'green' },
+  code: { zh: '貓咪在寫 code，請勿踩鍵盤', en: 'The cat is coding. Mind the keyboard', dot: 'green' },
   eat: { zh: '貓咪在吃午餐，別打擾', en: 'The cat is having lunch. Do not disturb', dot: 'green' },
   nap: { zh: '貓咪午後打盹中', en: 'The cat is taking an afternoon nap', dot: 'muted' },
   chase: { zh: '貓咪在追蝴蝶', en: 'The cat is chasing a butterfly', dot: 'green' },
@@ -42,6 +45,7 @@ const eyes = (c, pose) => {
     sleep: (cx) => `<path d="M${cx - 13} 96q13 9 26 0" fill="none" stroke="${c.ink}" stroke-width="3" stroke-linecap="round"/>`,
     stretch: (cx) => happyEye(c, cx),
     eat: (cx) => happyEye(c, cx),
+    wash: (cx) => happyEye(c, cx),
     nap: (cx) => openEye(c, cx, true),
     bored: (cx) => openEye(c, cx, true),
   }[pose];
@@ -166,6 +170,26 @@ const yarn = `<g class="yarn"><g class="ball">
   <path d="M-11-6q11 6 22 0M-12 2q12 7 24 0M-6-11q8 9 0 22" fill="none" stroke="#F4A3C0" stroke-width="1.6" stroke-linecap="round"/>
 </g></g>`;
 
+const props = (c, pose) => {
+  const fill = `fill="${c.accent}" stroke="${c.edge}" stroke-width="2" stroke-linejoin="round"`;
+  if (pose === 'wash') {
+    return `<ellipse cx="100" cy="125" rx="3.5" ry="4.5" fill="#E8735A"/>
+<g class="wash"><ellipse ${fill} cx="66" cy="140" rx="13" ry="17"/><path d="M58 128v6M66 126v6M74 128v6" stroke="${c.ink}" stroke-opacity=".3" stroke-width="1.5" stroke-linecap="round"/></g>`;
+  }
+  if (pose === 'push') {
+    return `<path d="M150 186h66" stroke="#8B5A2B" stroke-width="4" stroke-linecap="round"/>
+<g class="cup"><path d="M178 160h22v22q0 4-4 4h-14q-4 0-4-4z" fill="#6FA8F5" stroke="#2f5fb0" stroke-width="1.5" stroke-linejoin="round"/><path d="M200 166q8 0 8 7t-8 7" fill="none" stroke="#2f5fb0" stroke-width="2"/></g>
+<g class="push"><ellipse ${fill} cx="146" cy="176" rx="15" ry="10"/></g>`;
+  }
+  if (pose === 'code') {
+    const line = c.dark ? '#8a94a2' : '#8A94A2';
+    return `<rect x="42" y="148" width="116" height="66" rx="7" fill="${c.dark ? '#5B6574' : '#C5CCD6'}" stroke="${line}" stroke-width="2"/>
+<ellipse cx="100" cy="182" rx="11" ry="8" fill="#F5D547" stroke="#9A7410" stroke-width="1.5"/><path d="M104 175q4-6 10-5-2 5-10 5z" fill="#6CBF4A"/>
+<path d="M30 214h140l-8 10H38z" fill="${c.dark ? '#4A5260' : '#AEB6C2'}" stroke="${line}" stroke-width="2" stroke-linejoin="round"/>`;
+  }
+  return '';
+};
+
 const heart = `<g class="heart"><path transform="translate(34 36)" d="M0 5C-3-1-11 0-9 6c1 4 6 7 9 10 3-3 8-6 9-10 2-6-6-7-9-1z" fill="#E8588A" stroke="#a8325f" stroke-width="1.2"/></g>`;
 
 const extras = (c, pose, body, toy, mood) =>
@@ -232,6 +256,7 @@ ${body === 'moon' ? moon : ''}
   ${paws}
 </g>
 ${pose === 'eat' && body !== 'cake' ? bowl : ''}
+${props(c, pose)}
 ${{ redpacket, zongzi }[body] ?? ''}
 ${body === 'cake' ? cake(pose === 'eat') : ''}
 ${extras(c, pose, body, toy, mood)}
@@ -248,7 +273,21 @@ export const poseCss = (state, s = '') => {
     pose === 'stretch'
       ? 'animation:stretch 6s ease-in-out infinite'
       : `--b:${depth};animation:breathe ${dur}s ease-in-out infinite`;
-  const look = pose === 'chase' ? `lookchase ${{ wand: '3.2s', yarn: '4s' }[state.toy] ?? '4.5s'} ease-in-out infinite${state.toy === 'butterfly' ? '' : ' alternate'}` : 'look 9s ease-in-out infinite';
+  const look =
+    pose === 'chase'
+      ? `animation:lookchase ${{ wand: '3.2s', yarn: '4s' }[state.toy] ?? '4.5s'} ease-in-out infinite${state.toy === 'butterfly' ? '' : ' alternate'}`
+      : pose === 'push'
+        ? 'animation:none;transform:translate(6px,4px)'
+        : pose === 'code'
+          ? 'animation:read 2.6s ease-in-out infinite'
+          : 'animation:look 9s ease-in-out infinite';
+  const props =
+    pose === 'wash'
+      ? `${s}.wash{transform-box:fill-box;transform-origin:50% 100%;animation:wash 1.4s ease-in-out infinite}`
+      : pose === 'push'
+        ? `${s}.push{animation:push 4s ease-in-out infinite}
+${s}.cup{transform-box:fill-box;transform-origin:100% 100%;animation:cup 4s ease-in infinite}`
+        : '';
   const head =
     pose === 'eat' ? `${s}.head{animation:chomp 5s ease-in-out infinite}` : pose === 'nap' ? `${s}.head{animation:nod 5.2s ease-in-out infinite}` : '';
   const chase =
@@ -266,9 +305,10 @@ ${s}.ball{animation:spin 4s ease-in-out infinite alternate}
 ${s}.head{animation:track 4s ease-in-out infinite alternate}`,
         }[state.toy] ?? ''
       : '';
-  return `${s}.look{animation:${look}}
+  return `${s}.look{${look}}
 ${s}.breathe{${body}}
 ${head}
+${props}
 ${chase}`;
 };
 
@@ -305,6 +345,10 @@ ${poseCss(state)}
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(320deg)}}
 @keyframes flicker{from{transform:scale(1,1) rotate(-4deg)}to{transform:scale(.85,1.12) rotate(4deg)}}
 @keyframes fall{0%{transform:translateY(-30px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(240px) rotate(300deg);opacity:1}}
+@keyframes wash{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(8px,-26px) rotate(-14deg)}}
+@keyframes push{0%,15%,60%,100%{transform:translateX(0)}30%,38%{transform:translateX(22px)}}
+@keyframes cup{0%,30%{transform:none;opacity:1}40%{transform:rotate(75deg);opacity:1}62%{transform:translate(14px,80px) rotate(160deg);opacity:0}85%{transform:none;opacity:0}100%{transform:none;opacity:1}}
+@keyframes read{0%{transform:translate(-5px,3px)}80%{transform:translate(5px,3px)}100%{transform:translate(-5px,5px)}}
 @keyframes glow{0%,100%{opacity:.85}50%{opacity:1}}
 @keyframes fly{0%{transform:translate(168px,46px)}25%{transform:translate(192px,22px)}50%{transform:translate(182px,74px)}75%{transform:translate(150px,52px)}100%{transform:translate(168px,46px)}}
 @keyframes bob{from{transform:translateY(-3px)}to{transform:translateY(3px)}}

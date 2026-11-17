@@ -49,6 +49,9 @@ const states = [
   ...HEAD_ITEMS.map((head) => ({ id: `head-${head}`, pose: 'idle', head })),
   ...BODY_ITEMS.map((body) => ({ id: `body-${body}`, pose: 'idle', body })),
   { id: 'winter-santa-scarf', pose: 'idle', head: 'santa', body: 'scarf' },
+  { id: 'wash-sunglasses', pose: 'wash', head: 'sunglasses', mood: 'happy' },
+  { id: 'push-rain-maple', pose: 'push', slot: 'afternoon', head: 'maple', weather: 'rain' },
+  { id: 'code-evening-scarf', pose: 'code', slot: 'evening', head: 'santa', body: 'scarf', weather: 'partly', moonPhase: 0.5, mood: 'happy' },
   { id: 'birthday', pose: 'chase', head: 'partyhat', body: 'cake' },
   { id: 'birthday-eating', pose: 'eat', head: 'partyhat', body: 'cake' },
 ];

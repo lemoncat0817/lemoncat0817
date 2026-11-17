@@ -16,7 +16,12 @@ const flag = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.spl
 
 // 一天五個時段，台灣時間 00/06/11/14/18 點切換
 const slotOf = (hour) => (hour < 6 ? 'night' : hour < 11 ? 'morning' : hour < 14 ? 'noon' : hour < 18 ? 'afternoon' : 'evening');
-const SLOT_POSE = { night: 'sleep', morning: 'stretch', noon: 'eat', afternoon: 'nap', evening: 'chase' };
+const SLOTS = ['night', 'morning', 'noon', 'afternoon', 'evening'];
+const SLOT_POSES = { night: ['sleep'], morning: ['stretch', 'wash'], noon: ['eat'], afternoon: ['nap', 'push', 'code'], evening: ['chase', 'code'] };
+// 筆電會蓋住身前的節日道具，那幾天不寫 code
+const FRONT_ITEMS = ['cake', 'redpacket', 'zongzi'];
+const TOY_LIST = ['butterfly', 'wand', 'yarn'];
+const mod = (n, m) => ((n % m) + m) % m;
 
 // 農曆節日每年不同，只列到 2030；過了這年沒更新，節日造型就不會出現
 const LUNAR_NEW_YEAR = { 2026: '2026-02-17', 2027: '2027-02-06', 2028: '2028-01-26', 2029: '2029-02-13', 2030: '2030-02-03' };
@@ -59,6 +64,18 @@ const WEATHER_PLACE = '高雄市';
 
 const pick = (name, auto) => (flag(name) === 'none' ? null : (flag(name) ?? auto));
 
+// ord 是從 1970-01-01 起算的第幾個時段；同一個 ord 永遠得到同一個姿勢，橫幅與四格漫畫因此一致
+const slotAt = (ord, moodOn) => {
+  const day = Math.floor(ord / SLOTS.length);
+  const date = new Date(day * 86_400_000).toISOString().slice(0, 10);
+  const slot = SLOTS[mod(ord, SLOTS.length)];
+  // 睡覺優先，其次是好幾天沒 commit 的無聊（生日當天例外），最後才看時段
+  const bored = moodOn(date) === 'bored' && date.slice(5) !== BIRTHDAY;
+  const options = SLOT_POSES[slot].filter((p) => p !== 'code' || !FRONT_ITEMS.includes(bodyFor(date)));
+  const pose = slot === 'night' ? 'sleep' : bored ? 'bored' : options[mod(ord, options.length)];
+  return { slot, pose, toy: TOY_LIST[mod(day, TOY_LIST.length)] };
+};
+
 // 姿勢、配件、背景、訪客各一格，覆寫旗標讓任何狀態都能在本機單獨預覽
 export const resolveState = async () => {
   const tw = new Date(Date.now() + 8 * 3600_000);
@@ -68,16 +85,19 @@ export const resolveState = async () => {
   const slot = flag('slot') ?? slotOf(hour);
   const [calendar, weather] = await Promise.all([fetchCalendar(LOGIN), flag('weather') ?? fetchWeather(WEATHER_PLACE, join(root, 'assets', 'weather.json'))]);
   const mood = flag('mood') ?? moodOf(calendar, date);
-  // 睡覺優先，其次是好幾天沒 commit 的無聊（生日當天例外），最後才看時段
-  const bored = mood === 'bored' && date.slice(5) !== BIRTHDAY;
-  const pose = flag('pose') ?? (slot === 'night' ? 'sleep' : bored ? 'bored' : SLOT_POSE[slot]);
+  const moodOn = (d) => (d === date ? mood : moodOf(calendar, d));
+  const now = Math.floor(Date.parse(date) / 86_400_000) * SLOTS.length + SLOTS.indexOf(slot);
+  const current = slotAt(now, moodOn);
+  const pose = flag('pose') ?? current.pose;
+  const toy = flag('toy') ?? current.toy;
   return {
     date,
     slot,
     pose,
+    timeline: [...[3, 2, 1].map((back) => slotAt(now - back, moodOn)), { slot, pose, toy }],
     head: pick('head', headFor(date)),
     body: pick('body', bodyFor(date)),
-    toy: flag('toy') ?? ['butterfly', 'wand', 'yarn'][((day % 3) + 3) % 3],
+    toy,
     mood: mood === 'none' ? null : mood,
     calendar,
     weather: weather === 'none' ? null : weather,
