@@ -14,8 +14,8 @@ const PALETTE = {
     text: '#59636e',
   },
   dark: {
-    empty: 'fill="#9198A1" fill-opacity=".3"',
-    levels: ['', 'fill="#F5D547" fill-opacity=".35"', 'fill="#F5D547" fill-opacity=".55"', 'fill="#F5D547" fill-opacity=".78"', 'fill="#F5D547"'],
+    empty: 'fill="#9198A1" fill-opacity=".5"',
+    levels: ['', 'fill="#F5D547" fill-opacity=".55"', 'fill="#F5D547" fill-opacity=".72"', 'fill="#F5D547" fill-opacity=".88"', 'fill="#FFE066"'],
     text: '#9198a1',
   },
 };
@@ -30,7 +30,7 @@ const legend = (p, y) => {
   const right = X0 + 52 * STEP + 6;
   const swatch = (level, i) => {
     const x = right - 38 - (4 - i) * STEP;
-    return level ? paw(p.levels[level], x, y, level) : `<circle cx="${x}" cy="${y}" r="2" ${p.empty}/>`;
+    return level ? paw(p.levels[level], x, y, level) : `<circle cx="${x}" cy="${y}" r="2.3" ${p.empty}/>`;
   };
   return `<g font-size="11" fill="${p.text}">
   <text x="${right - 38 - 4 * STEP - 9}" y="${y + 4}" text-anchor="end">Less</text>
@@ -48,7 +48,7 @@ export const renderCalendar = (name, state, edge) => {
       const cells = week
         .map((d) => {
           const y = GRID_Y + new Date(d.date).getUTCDay() * STEP;
-          if (!d.level) return `<circle cx="${x}" cy="${y}" r="2" ${p.empty}/>`;
+          if (!d.level) return `<circle cx="${x}" cy="${y}" r="2.3" ${p.empty}/>`;
           return paw(p.levels[d.level], x, y, d.level);
         })
         .join('');
