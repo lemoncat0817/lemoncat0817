@@ -69,8 +69,8 @@ const slotAt = (ord, moodOn) => {
   const day = Math.floor(ord / SLOTS.length);
   const date = new Date(day * 86_400_000).toISOString().slice(0, 10);
   const slot = SLOTS[mod(ord, SLOTS.length)];
-  // 睡覺優先，其次是好幾天沒 commit 的無聊（生日當天例外），最後才看時段
-  const bored = moodOn(date) === 'bored' && date.slice(5) !== BIRTHDAY;
+  // 好幾天沒 commit 只讓下午趴著；一年近半數日子都可能是無聊，整天趴著會像當機（生日當天例外）
+  const bored = slot === 'afternoon' && moodOn(date) === 'bored' && date.slice(5) !== BIRTHDAY;
   const options = SLOT_POSES[slot].filter((p) => p !== 'code' || !FRONT_ITEMS.includes(bodyFor(date)));
   const pose = slot === 'night' ? 'sleep' : bored ? 'bored' : options[mod(ord, options.length)];
   return { slot, pose, toy: TOY_LIST[mod(day, TOY_LIST.length)] };
