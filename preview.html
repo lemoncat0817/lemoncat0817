@@ -12,3 +12,12 @@ body{margin:0;font:16px/1.6 system-ui,'Noto Sans CJK TC',sans-serif;display:grid
 </style>
 <div class="pane light"><div class="box"><div class="c"><img src="assets/banner-light.svg"></div><img src="assets/trail-light.svg"><img src="assets/comic-light.svg"></div></div>
 <div class="pane dark"><div class="box"><div class="c"><img src="assets/banner-dark.svg"></div><img src="assets/trail-dark.svg"><img src="assets/comic-dark.svg"></div></div>
+<script>
+// ?lang=en 時把 systemLanguage 改成不會命中的值，讓 <switch> 落到英文分支；<img> 內的 SVG 無法被外部覆寫語言，只能改檔案內容
+if (new URLSearchParams(location.search).get('lang') === 'en') {
+  document.querySelectorAll('img').forEach(async (img) => {
+    const svg = (await (await fetch(img.src)).text()).replaceAll(/systemLanguage="[^"]*"/g, 'systemLanguage="xx"');
+    img.src = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+  });
+}
+</script>
