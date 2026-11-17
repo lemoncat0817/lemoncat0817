@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "preview": "node scripts/build.mjs && python3 -m http.server 4400"
+    "preview": "node scripts/build.mjs && python3 -m http.server 4400",
+    "gallery": "node scripts/gallery.mjs && python3 -m http.server 4400 -d gallery"
   }
 }

@@ -5,20 +5,43 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 .blink{transform-box:fill-box;transform-origin:center;animation:blink 6s infinite}
 .look{animation:look 9s ease-in-out infinite}
 .tail{transform-box:fill-box;transform-origin:0% 95%;animation:tail 5.3s ease-in-out infinite}
-.breathe{transform-box:fill-box;transform-origin:50% 100%;animation:breathe 3.6s ease-in-out infinite}
+.breathe{transform-box:fill-box;transform-origin:50% 100%;--b:1.012;animation:breathe 3s ease-in-out infinite}
+.head{transform-box:fill-box;transform-origin:50% 100%}
+.head{animation:chomp 5s ease-in-out infinite}
+.yawn{transform-box:fill-box;transform-origin:50% 0%;animation:yawn 6s ease-in-out infinite}
 .zzz{animation:zzz 3.2s ease-in-out infinite}
-.dot{animation:pulse 2.4s ease-in-out infinite}
+.packet{transform-box:fill-box;transform-origin:50% 0%;animation:sway 3s ease-in-out infinite}
+.moon{animation:glow 4s ease-in-out infinite}
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:flicker .5s ease-in-out infinite alternate}
+.conf{animation:fall 4s linear infinite}
+
 }
+.yawn{opacity:0}
 @keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
 @keyframes look{0%,35%,100%{transform:translateX(0)}42%,60%{transform:translateX(7px)}68%,85%{transform:translateX(-6px)}}
+@keyframes lookchase{0%,100%{transform:translate(5px,-3px)}25%{transform:translate(7px,-5px)}50%{transform:translate(6px,2px)}75%{transform:translate(3px,-1px)}}
 @keyframes tail{0%,40%,100%{transform:rotate(0)}12%{transform:rotate(8deg)}22%{transform:rotate(-3deg)}31%{transform:rotate(5deg)}}
-@keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.012)}}
+@keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(var(--b))}}
+@keyframes stretch{0%,100%{transform:scale(1)}30%,60%{transform:scale(.96,1.09)}}
+@keyframes yawn{0%,28%{opacity:0;transform:scaleY(.2)}36%,56%{opacity:1;transform:scaleY(1)}64%,100%{opacity:0;transform:scaleY(.2)}}
+@keyframes chomp{0%,78%,100%{transform:translateY(0)}10%,30%,50%{transform:translateY(52px)}20%,40%,60%{transform:translateY(46px)}}
+@keyframes nod{0%,100%{transform:rotate(0)}55%,78%{transform:rotate(-7deg) translateY(4px)}}
+@keyframes track{0%,100%{transform:rotate(3deg)}25%{transform:rotate(5deg)}50%{transform:rotate(1deg)}75%{transform:rotate(2deg)}}
 @keyframes zzz{0%{opacity:0;transform:translateY(8px)}30%,70%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
+@keyframes sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg)}}
+@keyframes flicker{from{transform:scale(1,1) rotate(-4deg)}to{transform:scale(.85,1.12) rotate(4deg)}}
+@keyframes fall{0%{transform:translateY(-30px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(240px) rotate(300deg);opacity:1}}
+@keyframes glow{0%,100%{opacity:.85}50%{opacity:1}}
+@keyframes fly{0%{transform:translate(168px,46px)}25%{transform:translate(192px,22px)}50%{transform:translate(182px,74px)}75%{transform:translate(150px,52px)}100%{transform:translate(168px,46px)}}
+@keyframes bob{from{transform:translateY(-3px)}to{transform:translateY(3px)}}
+@keyframes flap{from{transform:scaleX(1)}to{transform:scaleX(.25)}}
+@media (prefers-reduced-motion:no-preference){.dot{animation:pulse 2.4s ease-in-out infinite}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 @keyframes type0{0%,7.50%{transform:scaleX(0);animation-timing-function:steps(22)}19.88%,93%{transform:scaleX(1)}94%,100%{transform:scaleX(0)}}
 #c0{transform-box:fill-box;transform-origin:left;animation:type0 16s infinite}
 </style>
 <g transform="translate(24 14) scale(1.02)">
+
 <g class="tail">
   <path d="M140 204c38 2 48-28 32-50" fill="none" stroke="#9A7410" stroke-width="15" stroke-linecap="round"/>
   <path d="M140 204c38 2 48-28 32-50" fill="none" stroke="#F5D547" stroke-width="12" stroke-linecap="round"/>
@@ -26,20 +49,38 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 <g class="breathe">
   <path fill="#F5D547" stroke="#9A7410" stroke-width="2" stroke-linejoin="round" d="M58 214c-12-44 0-86 42-88 42 2 54 44 42 88z"/>
   <path d="M100 164v50" stroke="#2B2508" stroke-opacity=".25" stroke-width="2"/>
-  <path fill="#F5D547" stroke="#9A7410" stroke-width="2" stroke-linejoin="round" d="M60 72 54 22l38 28zM140 72l6-50-38 28z"/>
-  <path d="M62 62 59 36l18 13zM138 62l3-26-18 13z" fill="#2B2508" fill-opacity=".18"/>
-  <path fill="#F5D547" stroke="#9A7410" stroke-width="2" stroke-linejoin="round" d="M30 96c6-3 13-7 18-13 8-24 30-36 52-36s44 12 52 36c5 6 12 10 18 13-6 3-13 7-18 13-8 24-30 36-52 36s-44-12-52-36c-5-6-12-10-18-13z"/>
-  <path d="M58 70q12-12 30-16" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="4" stroke-linecap="round"/>
-  <path d="M100 48q1-8 6-12" fill="none" stroke="#5a7a2a" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M105 37c6-10 18-12 26-8-5 9-17 13-26 8z" fill="#6CBF4A" stroke="#9A7410" stroke-width="1.5" stroke-linejoin="round"/>
-  <g class="blink"><ellipse cx="78" cy="94" rx="13" ry="14" fill="#fffdf2"/><ellipse class="look" cx="78" cy="94" rx="4.5" ry="9.5" fill="#2B2508"/></g><g class="blink"><ellipse cx="122" cy="94" rx="13" ry="14" fill="#fffdf2"/><ellipse class="look" cx="122" cy="94" rx="4.5" ry="9.5" fill="#2B2508"/></g>
-  <path d="M95 112h10l-5 6z" fill="#2B2508"/>
-  <path d="M100 118q-5 6-10 2m10-2q5 6 10 2M62 108l-40-4m40 10-40 4m116-10 40-4m-40 10 40 4" fill="none" stroke="#2B2508" stroke-width="2" stroke-linecap="round" stroke-opacity=".55"/>
+  <g>
+  <path d="M58 140q42 20 84 0v16q-42 20-84 0z" fill="#D8483A" stroke="#8f261c" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M74 149v9M90 153v9M106 153v9M122 149v9" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>
+  <path d="M112 154h22l3 40h-26z" fill="#D8483A" stroke="#8f261c" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M114 168h22M113 180h24" stroke="#fff" stroke-opacity=".55" stroke-width="3"/>
+  <path d="M112 194v8M118 194v10M124 194v8M130 194v10M136 194v8" stroke="#8f261c" stroke-width="2" stroke-linecap="round"/>
 </g>
+  <g class="head">
+    <path fill="#F5D547" stroke="#9A7410" stroke-width="2" stroke-linejoin="round" d="M60 72 54 22l38 28zM140 72l6-50-38 28z"/>
+    <path d="M62 62 59 36l18 13zM138 62l3-26-18 13z" fill="#2B2508" fill-opacity=".18"/>
+    <path fill="#F5D547" stroke="#9A7410" stroke-width="2" stroke-linejoin="round" d="M30 96c6-3 13-7 18-13 8-24 30-36 52-36s44 12 52 36c5 6 12 10 18 13-6 3-13 7-18 13-8 24-30 36-52 36s-44-12-52-36c-5-6-12-10-18-13z"/>
+    <path d="M58 70q12-12 30-16" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="4" stroke-linecap="round"/>
+    <path d="M100 48q1-8 6-12" fill="none" stroke="#5a7a2a" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M105 37c6-10 18-12 26-8-5 9-17 13-26 8z" fill="#6CBF4A" stroke="#9A7410" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M66 99q12-13 24 0" fill="none" stroke="#2B2508" stroke-width="3" stroke-linecap="round"/><path d="M110 99q12-13 24 0" fill="none" stroke="#2B2508" stroke-width="3" stroke-linecap="round"/>
+    <path d="M95 112h10l-5 6z" fill="#2B2508"/>
+    <path d="M100 118q-5 6-10 2m10-2q5 6 10 2" fill="none" stroke="#2B2508" stroke-width="2" stroke-linecap="round" stroke-opacity=".55" class="mouth"/>
+    <path d="M62 108l-40-4m40 10-40 4m116-10 40-4m-40 10 40 4" fill="none" stroke="#2B2508" stroke-width="2" stroke-linecap="round" stroke-opacity=".55"/>
+    
+  </g>
+</g>
+<g>
+  <path d="M54 196h92c-2 22-19 31-46 31s-44-9-46-31z" fill="#E8735A" stroke="#a8432c" stroke-width="2" stroke-linejoin="round"/>
+  <ellipse cx="100" cy="196" rx="46" ry="8" fill="#F4A38F" stroke="#a8432c" stroke-width="2"/>
+  <g fill="#8B5A2B"><circle cx="80" cy="195" r="3.2"/><circle cx="92" cy="193.5" r="3.2"/><circle cx="108" cy="193.5" r="3.2"/><circle cx="120" cy="195" r="3.2"/><circle cx="86" cy="198" r="3"/><circle cx="114" cy="198" r="3"/></g>
+</g>
+
+
 </g>
 <g transform="translate(250 84)">
   <text font-size="40" font-weight="800" fill="#1f2328" y="0">檸檬貓 <tspan fill="#59636e" font-weight="500" font-size="26">Lemoncat</tspan></text>
-  <g transform="translate(0 36)"><circle class="dot" cx="5" cy="-5" r="4.5" fill="#3fb950"/><text x="18" font-size="14" fill="#59636e">貓咪醒著，正在巡視 commit</text></g>
+  <g transform="translate(0 36)"><circle class="dot" cx="5" cy="-5" r="4.5" fill="#3fb950"/><text x="18" font-size="14" fill="#59636e">貓咪在吃午餐，別打擾</text></g>
   <g transform="translate(0 82)">
     <text font-size="13" fill="#59636e" font-weight="700" y="-8" letter-spacing="1">今日貓咪冷知識</text>
     <clipPath id="clip0"><rect id="c0" x="0" y="0" width="380" height="28"/></clipPath>
