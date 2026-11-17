@@ -1,7 +1,14 @@
-const get = async (url, init = {}) => {
-  const res = await fetch(url, { ...init, signal: AbortSignal.timeout(8000) });
-  if (!res.ok) throw new Error(`${res.status} ${url}`);
-  return res.json();
+import { readFileSync, writeFileSync } from 'node:fs';
+
+const get = async (url, init = {}, tries = 2) => {
+  try {
+    const res = await fetch(url, { ...init, signal: AbortSignal.timeout(15000) });
+    if (!res.ok) throw new Error(`${res.status} ${url}`);
+    return res.json();
+  } catch (error) {
+    if (tries <= 1) throw error;
+    return get(url, init, tries - 1);
+  }
 };
 
 const LEVELS = { NONE: 0, FIRST_QUARTILE: 1, SECOND_QUARTILE: 2, THIRD_QUARTILE: 3, FOURTH_QUARTILE: 4 };
@@ -58,11 +65,29 @@ const kindOf = (code) => {
 const SEVERITY = ['clear', 'partly', 'cloudy', 'rain', 'thunder'];
 
 // 排程間隔好幾小時，用接下來 6 小時的逐時預報取最常出現的類型；同票時取較嚴重的
-export const fetchWeather = async (place) => {
+// 天氣 API 偶爾逾時；6 小時內沿用上次成功的結果，避免雲朵忽有忽無又多一次 commit
+const STALE_MS = 6 * 3600_000;
+
+export const fetchWeather = async (place, cacheFile) => {
   const coords = PLACES[place];
   if (!coords) return null;
+  const kind = await fetchWeatherKind(coords);
+  if (kind) {
+    writeFileSync(cacheFile, `${JSON.stringify({ place, kind, at: new Date().toISOString() })}\n`);
+    return kind;
+  }
   try {
-    const [lat, lon] = coords;
+    const cached = JSON.parse(readFileSync(cacheFile, 'utf8'));
+    if (cached.place === place && Date.now() - Date.parse(cached.at) < STALE_MS) {
+      console.warn(`weather: 沿用 ${cached.at} 的結果 ${cached.kind}`);
+      return cached.kind;
+    }
+  } catch {}
+  return null;
+};
+
+const fetchWeatherKind = async ([lat, lon]) => {
+  try {
     const json = await get(
       `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=weather_code&forecast_hours=6&timezone=Asia%2FTaipei`,
     );

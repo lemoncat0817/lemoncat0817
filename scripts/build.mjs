@@ -63,7 +63,7 @@ export const resolveState = async () => {
   const hour = Number(flag('hour') ?? tw.getUTCHours());
   const day = Number(flag('day') ?? Math.floor(Date.parse(date) / 86_400_000));
   const slot = flag('slot') ?? slotOf(hour);
-  const [calendar, weather] = await Promise.all([fetchCalendar(LOGIN), flag('weather') ?? fetchWeather(WEATHER_PLACE)]);
+  const [calendar, weather] = await Promise.all([fetchCalendar(LOGIN), flag('weather') ?? fetchWeather(WEATHER_PLACE, join(root, 'assets', 'weather.json'))]);
   const mood = flag('mood') ?? moodOf(calendar, date);
   // 睡覺優先，其次是好幾天沒 commit 的無聊（生日當天例外），最後才看時段
   const bored = mood === 'bored' && date.slice(5) !== BIRTHDAY;

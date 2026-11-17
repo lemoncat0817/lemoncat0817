@@ -60,7 +60,7 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 #c0{transform-box:fill-box;transform-origin:left;animation:type0 16s infinite}
 </style>
 <g transform="translate(24 14) scale(1.02)">
-
+<g transform="translate(10 20) scale(1.1)"><g class="cloud"><path d="M-20 8a9 9 0 0 1 2-17 13 13 0 0 1 24-5 10 10 0 0 1 14 9 8 8 0 0 1-2 13z" fill="#3A4250" stroke="#5B6574" stroke-width="1.5" stroke-linejoin="round"/></g></g><g transform="translate(186 10) scale(0.95)"><g class="cloud slow"><path d="M-20 8a9 9 0 0 1 2-17 13 13 0 0 1 24-5 10 10 0 0 1 14 9 8 8 0 0 1-2 13z" fill="#3A4250" stroke="#5B6574" stroke-width="1.5" stroke-linejoin="round"/></g></g>
 
 <g class="tail">
   <path d="M140 204c38 2 48-28 32-50" fill="none" stroke="none" stroke-width="15" stroke-linecap="round"/>
