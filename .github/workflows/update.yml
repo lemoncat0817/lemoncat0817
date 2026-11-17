@@ -2,11 +2,7 @@ name: update-cat
 
 on:
   schedule:
-    - cron: '5 16 * * *'
-    - cron: '5 22 * * *'
-    - cron: '5 3 * * *'
-    - cron: '5 6 * * *'
-    - cron: '5 10 * * *'
+    - cron: '*/20 * * * *'
   workflow_dispatch:
 
 permissions:
