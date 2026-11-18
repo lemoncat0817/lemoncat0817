@@ -13,9 +13,9 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 .moon{animation:glow 4s ease-in-out infinite}
 .flame{transform-box:fill-box;transform-origin:50% 100%;animation:flicker .5s ease-in-out infinite alternate}
 .conf{animation:fall 4s linear infinite}
-.look{animation:look 9s ease-in-out infinite}
-.breathe{--b:1.012;animation:breathe 3s ease-in-out infinite}
-.head{animation:chomp 5s ease-in-out infinite}
+.look{animation:read 2.6s ease-in-out infinite}
+.breathe{--b:1.012;animation:breathe 3.6s ease-in-out infinite}
+
 
 
 }
@@ -71,10 +71,7 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 #te1{transform-box:fill-box;transform-origin:left;animation:te1 16s infinite}
 </style>
 <g transform="translate(24 14) scale(1.02)">
-<g transform="translate(2 18)"><g class="sun">
-  <g stroke="#F2A900" stroke-width="3" stroke-linecap="round"><path d="M0-18v-6" transform="rotate(0)"/><path d="M0-18v-6" transform="rotate(45)"/><path d="M0-18v-6" transform="rotate(90)"/><path d="M0-18v-6" transform="rotate(135)"/><path d="M0-18v-6" transform="rotate(180)"/><path d="M0-18v-6" transform="rotate(225)"/><path d="M0-18v-6" transform="rotate(270)"/><path d="M0-18v-6" transform="rotate(315)"/></g>
-  <circle r="12" fill="#FFC53D" stroke="#E08E00" stroke-width="1.5"/>
-</g></g>
+<g transform="translate(2 18)"><circle r="12" fill="#fff" fill-opacity=".1"/><path class="moonlit" d="M0 -12A12 12 0 0 1 0 12A2.93 12 0 0 1 0 -12z" fill="#FFF1B8" stroke="#C9A227" stroke-width="1.2" stroke-linejoin="round"/></g><g transform="translate(30 2) scale(0.8)"><path class="star" style="animation-delay:0s" d="M0-6 1.6-1.6 6 0 1.6 1.6 0 6-1.6 1.6-6 0-1.6-1.6z" fill="#FFE58A"/></g><g transform="translate(22 38) scale(0.7)"><path class="star" style="animation-delay:0.8s" d="M0-6 1.6-1.6 6 0 1.6 1.6 0 6-1.6 1.6-6 0-1.6-1.6z" fill="#FFE58A"/></g><g transform="translate(40 -2) scale(0.75)"><path class="star" style="animation-delay:1.6s" d="M0-6 1.6-1.6 6 0 1.6 1.6 0 6-1.6 1.6-6 0-1.6-1.6z" fill="#FFE58A"/></g><g transform="translate(196 8) scale(1)"><path class="star" style="animation-delay:0.4s" d="M0-6 1.6-1.6 6 0 1.6 1.6 0 6-1.6 1.6-6 0-1.6-1.6z" fill="#FFE58A"/></g><g transform="translate(208 50) scale(0.8)"><path class="star" style="animation-delay:1.2s" d="M0-6 1.6-1.6 6 0 1.6 1.6 0 6-1.6 1.6-6 0-1.6-1.6z" fill="#FFE58A"/></g>
 
 <g class="tail">
   <path d="M140 204c38 2 48-28 32-50" fill="none" stroke="none" stroke-width="15" stroke-linecap="round"/>
@@ -97,7 +94,7 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
     <path d="M58 70q12-12 30-16" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="4" stroke-linecap="round"/>
     <path d="M100 48q1-8 6-12" fill="none" stroke="#5a7a2a" stroke-width="2.5" stroke-linecap="round"/>
     <path d="M105 37c6-10 18-12 26-8-5 9-17 13-26 8z" fill="#6CBF4A" stroke="none" stroke-width="1.5" stroke-linejoin="round"/>
-    <path d="M66 99q12-13 24 0" fill="none" stroke="#2B2508" stroke-width="3" stroke-linecap="round"/><path d="M110 99q12-13 24 0" fill="none" stroke="#2B2508" stroke-width="3" stroke-linecap="round"/>
+    <g class="blink"><ellipse cx="78" cy="94" rx="13" ry="14" fill="#fffdf2"/><ellipse class="look" cx="78" cy="94" rx="4.5" ry="9.5" fill="#2B2508"/></g><g class="blink"><ellipse cx="122" cy="94" rx="13" ry="14" fill="#fffdf2"/><ellipse class="look" cx="122" cy="94" rx="4.5" ry="9.5" fill="#2B2508"/></g>
     <path d="M95 112h10l-5 6z" fill="#2B2508"/>
     <path d="M100 118q-5 6-10 2m10-2q5 6 10 2" fill="none" stroke="#2B2508" stroke-width="2" stroke-linecap="round" stroke-opacity=".55" class="mouth"/>
     <path d="M62 108l-40-4m40 10-40 4m116-10 40-4m-40 10 40 4" fill="none" stroke="#2B2508" stroke-width="2" stroke-linecap="round" stroke-opacity=".55"/>
@@ -105,12 +102,10 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
   </g></g>
   
 </g>
-<g>
-  <path d="M54 196h92c-2 22-19 31-46 31s-44-9-46-31z" fill="#E8735A" stroke="#a8432c" stroke-width="2" stroke-linejoin="round"/>
-  <ellipse cx="100" cy="196" rx="46" ry="8" fill="#F4A38F" stroke="#a8432c" stroke-width="2"/>
-  <g fill="#8B5A2B"><circle cx="80" cy="195" r="3.2"/><circle cx="92" cy="193.5" r="3.2"/><circle cx="108" cy="193.5" r="3.2"/><circle cx="120" cy="195" r="3.2"/><circle cx="86" cy="198" r="3"/><circle cx="114" cy="198" r="3"/></g>
-</g>
 
+<rect x="42" y="148" width="116" height="66" rx="7" fill="#5B6574" stroke="#8a94a2" stroke-width="2"/>
+<ellipse cx="100" cy="182" rx="11" ry="8" fill="#F5D547" stroke="#9A7410" stroke-width="1.5"/><path d="M104 175q4-6 10-5-2 5-10 5z" fill="#6CBF4A"/>
+<path d="M30 214h140l-8 10H38z" fill="#4A5260" stroke="#8a94a2" stroke-width="2" stroke-linejoin="round"/>
 
 
 <g class="heart"><path transform="translate(34 36)" d="M0 5C-3-1-11 0-9 6c1 4 6 7 9 10 3-3 8-6 9-10 2-6-6-7-9-1z" fill="#E8588A" stroke="#a8325f" stroke-width="1.2"/></g>
@@ -118,7 +113,7 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 
 <g transform="translate(250 84)">
   <switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><text font-size="40" font-weight="800" fill="#e6edf3" y="0">檸檬貓 <tspan fill="#9198a1" font-weight="500" font-size="26">Lemoncat</tspan></text></g><g><text font-size="40" font-weight="800" fill="#e6edf3" y="0">Lemoncat <tspan fill="#9198a1" font-weight="500" font-size="26">檸檬貓</tspan></text></g></switch>
-  <g transform="translate(0 36)"><circle class="dot" cx="5" cy="-5" r="4.5" fill="#3fb950"/><switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><text x="18" font-size="14" fill="#9198a1">貓咪在吃午餐，別打擾</text></g><g><text x="18" font-size="14" fill="#9198a1">The cat is having lunch. Do not disturb</text></g></switch></g>
+  <g transform="translate(0 36)"><circle class="dot" cx="5" cy="-5" r="4.5" fill="#3fb950"/><switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><text x="18" font-size="14" fill="#9198a1">貓咪在寫 code，請勿踩鍵盤</text></g><g><text x="18" font-size="14" fill="#9198a1">The cat is coding. Mind the keyboard</text></g></switch></g>
   <g transform="translate(0 82)">
     <switch><g systemLanguage="zh,zh-TW,zh-HK,zh-MO,zh-CN,zh-SG,zh-Hant,zh-Hans,zh-Hant-TW,zh-Hans-CN"><text font-size="13" fill="#9198a1" font-weight="700" y="-8" letter-spacing="1">今日貓咪冷知識</text><clipPath id="clip-tz0"><rect id="tz0" x="0" y="0" width="456" height="28"/></clipPath>
 <text x="0" y="20" font-size="17" fill="#e6edf3" clip-path="url(#clip-tz0)">貓用前腳踩踩，一般認為是小時候喝奶留下的習慣。</text></g><g><text font-size="13" fill="#9198a1" font-weight="700" y="-8" letter-spacing="0.6">CAT FACT OF THE DAY</text><clipPath id="clip-te0"><rect id="te0" x="0" y="0" width="554" height="28"/></clipPath>
