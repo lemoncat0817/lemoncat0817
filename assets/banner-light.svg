@@ -71,7 +71,10 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 #te1{transform-box:fill-box;transform-origin:left;animation:te1 16s infinite}
 </style>
 <g transform="translate(24 14) scale(1.02)">
-
+<g transform="translate(2 18)"><g class="sun">
+  <g stroke="#F2A900" stroke-width="3" stroke-linecap="round"><path d="M0-18v-6" transform="rotate(0)"/><path d="M0-18v-6" transform="rotate(45)"/><path d="M0-18v-6" transform="rotate(90)"/><path d="M0-18v-6" transform="rotate(135)"/><path d="M0-18v-6" transform="rotate(180)"/><path d="M0-18v-6" transform="rotate(225)"/><path d="M0-18v-6" transform="rotate(270)"/><path d="M0-18v-6" transform="rotate(315)"/></g>
+  <circle r="12" fill="#FFC53D" stroke="#E08E00" stroke-width="1.5"/>
+</g></g>
 
 <g class="tail">
   <path d="M140 204c38 2 48-28 32-50" fill="none" stroke="#9A7410" stroke-width="15" stroke-linecap="round"/>
