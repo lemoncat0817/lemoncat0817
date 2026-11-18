@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "preview": "node scripts/build.mjs && python3 -m http.server 4400",
+    "preview": "node scripts/build.mjs --out=.preview/assets && cp preview.html .preview/ && python3 -m http.server 4400 -d .preview",
     "gallery": "node scripts/gallery.mjs && python3 -m http.server 4400 -d gallery"
   }
 }

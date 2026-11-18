@@ -1,5 +1,5 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { FONT, POSES, TOYS, bilingual, catCss, renderCat } from './cat.mjs';
 import { facts, factsEn } from './facts.mjs';
@@ -13,6 +13,9 @@ import { moonPhase } from './weather.mjs';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 const flag = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.split('=')[1];
+
+// 天氣快取跟著輸出目錄走，本機預覽才不會改動版控中的 assets/weather.json
+const outDir = resolve(process.cwd(), flag('out') ?? join(root, 'assets'));
 
 // 一天五個時段，台灣時間 00/06/11/14/18 點切換
 const slotOf = (hour) => (hour < 6 ? 'night' : hour < 11 ? 'morning' : hour < 14 ? 'noon' : hour < 18 ? 'afternoon' : 'evening');
@@ -83,7 +86,7 @@ export const resolveState = async () => {
   const hour = Number(flag('hour') ?? tw.getUTCHours());
   const day = Number(flag('day') ?? Math.floor(Date.parse(date) / 86_400_000));
   const slot = flag('slot') ?? slotOf(hour);
-  const [calendar, weather] = await Promise.all([fetchCalendar(LOGIN), flag('weather') ?? fetchWeather(WEATHER_PLACE, join(root, 'assets', 'weather.json'))]);
+  const [calendar, weather] = await Promise.all([fetchCalendar(LOGIN), flag('weather') ?? fetchWeather(WEATHER_PLACE, join(outDir, 'weather.json'))]);
   const mood = flag('mood') ?? moodOf(calendar, date);
   const moodOn = (d) => (d === date ? mood : moodOf(calendar, d));
   const now = Math.floor(Date.parse(date) / 86_400_000) * SLOTS.length + SLOTS.indexOf(slot);
@@ -242,9 +245,8 @@ export const render = (state) => {
 };
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const state = await resolveState();
-  const outDir = flag('out') ? join(process.cwd(), flag('out')) : join(root, 'assets');
   mkdirSync(outDir, { recursive: true });
+  const state = await resolveState();
   for (const [file, svg] of Object.entries(render(state))) writeFileSync(join(outDir, file), svg);
   console.log(JSON.stringify({ ...state, factEn: undefined, calendar: state.calendar && `${state.calendar.weeks.length} weeks, ${state.calendar.total} total` }));
 }
