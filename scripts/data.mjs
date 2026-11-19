@@ -64,25 +64,36 @@ const kindOf = (code) => {
 
 const SEVERITY = ['clear', 'partly', 'cloudy', 'rain', 'thunder'];
 
-// 排程間隔好幾小時，用接下來 6 小時的逐時預報取最常出現的類型；同票時取較嚴重的
+// 用接下來 6 小時的逐時預報取最常出現的類型，避免每 10 分鐘的更新讓天氣忽晴忽雨；同票時取較嚴重的
 // 天氣 API 偶爾逾時；6 小時內沿用上次成功的結果，避免雲朵忽有忽無又多一次 commit
 const STALE_MS = 6 * 3600_000;
+// 天氣沒變時只在快取過半效期才刷新時間戳記，否則每次排程都會產生只改時間的 commit
+const REFRESH_MS = STALE_MS / 2;
+
+const readCache = (cacheFile) => {
+  try {
+    return JSON.parse(readFileSync(cacheFile, 'utf8'));
+  } catch {
+    return null;
+  }
+};
 
 export const fetchWeather = async (place, cacheFile) => {
   const coords = PLACES[place];
   if (!coords) return null;
   const kind = await fetchWeatherKind(coords);
+  const cached = readCache(cacheFile);
+  const age = cached?.place === place ? Date.now() - Date.parse(cached.at) : Infinity;
   if (kind) {
-    writeFileSync(cacheFile, `${JSON.stringify({ place, kind, at: new Date().toISOString() })}\n`);
+    if (cached?.kind !== kind || !(age < REFRESH_MS)) {
+      writeFileSync(cacheFile, `${JSON.stringify({ place, kind, at: new Date().toISOString() })}\n`);
+    }
     return kind;
   }
-  try {
-    const cached = JSON.parse(readFileSync(cacheFile, 'utf8'));
-    if (cached.place === place && Date.now() - Date.parse(cached.at) < STALE_MS) {
-      console.warn(`weather: 沿用 ${cached.at} 的結果 ${cached.kind}`);
-      return cached.kind;
-    }
-  } catch {}
+  if (age < STALE_MS) {
+    console.warn(`weather: 沿用 ${cached.at} 的結果 ${cached.kind}`);
+    return cached.kind;
+  }
   return null;
 };
 
