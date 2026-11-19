@@ -4,8 +4,9 @@ on:
   push:
     branches: [main]
     paths: ['scripts/**', '.github/workflows/update.yml']
+  # 備援：主要觸發是 worker/ 的外部排程，這裡避開整點負載高峰
   schedule:
-    - cron: '*/20 * * * *'
+    - cron: '7,27,47 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -35,5 +36,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add assets
-          git diff --cached --quiet || git commit -m "chore: 更新貓咪橫幅"
-          git push
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: 更新貓咪橫幅"
+          for i in 1 2 3 4; do
+            git pull --rebase origin main && git push && exit 0
+            sleep $((i * 5))
+          done
+          exit 1

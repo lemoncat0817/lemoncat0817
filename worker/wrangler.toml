@@ -1,0 +1,9 @@
+name = "cat-banner-trigger"
+main = "index.mjs"
+compatibility_date = "2025-01-01"
+
+[vars]
+REPO = "lemoncat0817/lemoncat0817"
+
+[triggers]
+crons = ["*/10 * * * *"]
