@@ -65,6 +65,9 @@ const LOGIN = 'lemoncat0817';
 // 要顯示天氣時填 data.mjs 的 PLACES 裡的縣市名；留 null 就不抓天氣
 const WEATHER_PLACE = '高雄市';
 
+const FACTS_PER_DAY = 3;
+const dayFacts = (list, day) => Array.from({ length: FACTS_PER_DAY }, (_, k) => list[mod(day * FACTS_PER_DAY + k, list.length)]);
+
 const pick = (name, auto) => (flag(name) === 'none' ? null : (flag(name) ?? auto));
 
 // ord 是從 1970-01-01 起算的第幾個時段；同一個 ord 永遠得到同一個姿勢，橫幅與四格漫畫因此一致
@@ -107,8 +110,8 @@ export const resolveState = async () => {
     moonPhase: moonPhase(Date.parse(`${date}T${String(hour).padStart(2, '0')}:00:00+08:00`)),
     event: pick('event', eventFor(date, slot, weather === 'none' ? null : weather)),
     guest: pick('guest', guestFor(day)),
-    fact: facts[((day % facts.length) + facts.length) % facts.length],
-    factEn: factsEn[((day % factsEn.length) + factsEn.length) % factsEn.length],
+    facts: dayFacts(facts, day),
+    factsEn: dayFacts(factsEn, day),
   };
 };
 
@@ -137,28 +140,42 @@ const wrap = (text, max, size) => {
   return lines.map((l) => ({ text: l, width: width(l) }));
 };
 
-const typing = (c, text, id) => {
+const TYPE = 0.09;
+const ERASE = 0.035;
+const HOLD = 4;
+const GAP = 0.6;
+
+const typing = (c, sentences, id) => {
   const size = 17;
-  const cycle = 16;
-  const lines = wrap(text, 500, size);
+  const blocks = sentences.map((text) => wrap(text, 500, size).map((l) => ({ ...l, n: [...l.text].length })));
+  const count = (lines) => lines.reduce((sum, l) => sum + l.n, 0);
+  const cycle = blocks.reduce((t, lines) => t + GAP + count(lines) * (TYPE + ERASE) + HOLD, 0);
   const p = (t) => ((t / cycle) * 100).toFixed(2);
-  let start = 1.2;
-  return lines.map((l, i) => {
-    const n = [...l.text].length;
-    const end = start + n * 0.09;
-    const css = `@keyframes ${id}${i}{0%,${p(start)}%{transform:scaleX(0);animation-timing-function:steps(${n})}${p(end)}%,93%{transform:scaleX(1)}94%,100%{transform:scaleX(0)}}
-#${id}${i}{transform-box:fill-box;transform-origin:left;animation:${id}${i} ${cycle}s infinite}`;
-    const body = `<clipPath id="clip-${id}${i}"><rect id="${id}${i}" x="0" y="${i * 28}" width="${Math.ceil(l.width * 1.15) + 6}" height="28"/></clipPath>
-<text x="0" y="${i * 28 + 20}" font-size="${size}" fill="${c.text}" clip-path="url(#clip-${id}${i})">${esc(l.text)}</text>`;
-    start = end;
-    return { css, body };
+  let t = 0;
+  return blocks.flatMap((lines, s) => {
+    const typeStart = t + GAP;
+    const eraseStart = typeStart + count(lines) * TYPE + HOLD;
+    t = eraseStart + count(lines) * ERASE;
+    return lines.map((l, i) => {
+      const key = `${id}${s}_${i}`;
+      const before = count(lines.slice(0, i));
+      const after = count(lines.slice(i + 1));
+      const typeFrom = typeStart + before * TYPE;
+      const eraseFrom = eraseStart + after * ERASE;
+      // 非首句預設收起，不支援 CSS 動畫的渲染器才不會把幾句疊在一起
+      const css = `@keyframes ${key}{0%,${p(typeFrom)}%{transform:scaleX(0);animation-timing-function:steps(${l.n})}${p(typeFrom + l.n * TYPE)}%,${p(eraseFrom)}%{transform:scaleX(1);animation-timing-function:steps(${l.n})}${p(eraseFrom + l.n * ERASE)}%,100%{transform:scaleX(0)}}
+#${key}{transform-box:fill-box;transform-origin:left;${s ? 'transform:scaleX(0);' : ''}animation:${key} ${cycle.toFixed(2)}s infinite}`;
+      const body = `<clipPath id="clip-${key}"><rect id="${key}" x="0" y="${i * 28}" width="${Math.ceil(l.width * 1.15) + 6}" height="28"/></clipPath>
+<text x="0" y="${i * 28 + 20}" font-size="${size}" fill="${c.text}" clip-path="url(#clip-${key})">${esc(l.text)}</text>`;
+      return { css, body };
+    });
   });
 };
 
 const banner = (name, state) => {
   const c = themes[name];
-  const zh = typing(c, state.fact, 'tz');
-  const en = typing(c, state.factEn, 'te');
+  const zh = typing(c, state.facts, 'tz');
+  const en = typing(c, state.factsEn, 'te');
   const birthday = state.body === 'cake';
   const occasion =
     state.pose === 'sleep'
@@ -174,7 +191,7 @@ const banner = (name, state) => {
   const line = (text) => `<text x="18" font-size="14" fill="${c.muted}">${esc(text)}</text>`;
   const label = (text, spacing) => `<text font-size="13" fill="${c.muted}" font-weight="700" y="-8" letter-spacing="${spacing}">${text}</text>`;
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="250" viewBox="0 0 840 250" role="img" aria-label="檸檬貓 Lemoncat. ${esc(state.factEn)}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="840" height="250" viewBox="0 0 840 250" role="img" aria-label="檸檬貓 Lemoncat. ${esc(state.factsEn.join(' '))}">
 <style>
 text{font-family:${FONT}}
 ${catCss(state)}
@@ -248,5 +265,5 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   mkdirSync(outDir, { recursive: true });
   const state = await resolveState();
   for (const [file, svg] of Object.entries(render(state))) writeFileSync(join(outDir, file), svg);
-  console.log(JSON.stringify({ ...state, factEn: undefined, calendar: state.calendar && `${state.calendar.weeks.length} weeks, ${state.calendar.total} total` }));
+  console.log(JSON.stringify({ ...state, factsEn: undefined, calendar: state.calendar && `${state.calendar.weeks.length} weeks, ${state.calendar.total} total` }));
 }

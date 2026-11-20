@@ -56,7 +56,7 @@ const states = [
   { id: 'birthday-eating', pose: 'eat', head: 'partyhat', body: 'cake' },
 ];
 
-const base = { toy: 'butterfly',  date: '2026-01-01', slot: 'morning', head: null, body: null, mood: null, weather: null, guest: null, fact: facts[0], factEn: factsEn[9] };
+const base = { toy: 'butterfly',  date: '2026-01-01', slot: 'morning', head: null, body: null, mood: null, weather: null, guest: null, facts: facts.slice(0, 3), factsEn: factsEn.slice(8, 11) };
 const cells = states.map((s) => {
   const state = { ...base, ...s };
   mkdirSync(join(dir, s.id), { recursive: true });
