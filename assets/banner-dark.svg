@@ -3,7 +3,7 @@
 text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif}
 @media (prefers-reduced-motion:no-preference){
 .blink{transform-box:fill-box;transform-origin:center;animation:blink 6s infinite}
-.tail{transform-box:fill-box;transform-origin:0% 95%;animation:tail 5.3s ease-in-out infinite}
+.tail{transform-box:fill-box;transform-origin:0% 95%;animation:tail 2.4s ease-in-out infinite}
 .heart{animation:zzz 2.6s ease-in-out infinite}
 .breathe{transform-box:fill-box;transform-origin:50% 100%}
 .head{transform-box:fill-box;transform-origin:50% 100%}
@@ -122,7 +122,7 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 <path d="M30 214h140l-8 10H38z" fill="#4A5260" stroke="#8a94a2" stroke-width="2" stroke-linejoin="round"/>
 
 
-
+<g class="heart"><path transform="translate(34 36)" d="M0 5C-3-1-11 0-9 6c1 4 6 7 9 10 3-3 8-6 9-10 2-6-6-7-9-1z" fill="#E8588A" stroke="#a8325f" stroke-width="1.2"/></g>
 </g>
 
 <g transform="translate(250 84)">
