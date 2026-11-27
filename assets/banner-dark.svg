@@ -81,10 +81,7 @@ text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft Jhen
 #te2_1{transform-box:fill-box;transform-origin:left;transform:scaleX(0);animation:te2_1 36.55s infinite}
 </style>
 <g transform="translate(24 14) scale(1.02)">
-<g transform="translate(2 18)"><g class="sun">
-  <g stroke="#F2A900" stroke-width="3" stroke-linecap="round"><path d="M0-18v-6" transform="rotate(0)"/><path d="M0-18v-6" transform="rotate(45)"/><path d="M0-18v-6" transform="rotate(90)"/><path d="M0-18v-6" transform="rotate(135)"/><path d="M0-18v-6" transform="rotate(180)"/><path d="M0-18v-6" transform="rotate(225)"/><path d="M0-18v-6" transform="rotate(270)"/><path d="M0-18v-6" transform="rotate(315)"/></g>
-  <circle r="12" fill="#FFC53D" stroke="#E08E00" stroke-width="1.5"/>
-</g></g>
+<g transform="translate(10 20) scale(1.1)"><g class="cloud"><path d="M-20 8a9 9 0 0 1 2-17 13 13 0 0 1 24-5 10 10 0 0 1 14 9 8 8 0 0 1-2 13z" fill="#3A4250" stroke="#5B6574" stroke-width="1.5" stroke-linejoin="round"/></g></g><g transform="translate(186 10) scale(0.95)"><g class="cloud slow"><path d="M-20 8a9 9 0 0 1 2-17 13 13 0 0 1 24-5 10 10 0 0 1 14 9 8 8 0 0 1-2 13z" fill="#3A4250" stroke="#5B6574" stroke-width="1.5" stroke-linejoin="round"/></g></g>
 
 <g class="tail">
   <path d="M140 204c38 2 48-28 32-50" fill="none" stroke="none" stroke-width="15" stroke-linecap="round"/>
