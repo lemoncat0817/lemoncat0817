@@ -3,7 +3,7 @@
 text{font-family:'Noto Sans CJK TC','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif}
 @media (prefers-reduced-motion:no-preference){
 .blink{transform-box:fill-box;transform-origin:center;animation:blink 6s infinite}
-.tail{transform-box:fill-box;transform-origin:0% 95%;animation:tail 5.3s ease-in-out infinite}
+.tail{transform-box:fill-box;transform-origin:0% 95%;animation:tail 2.4s ease-in-out infinite}
 .heart{animation:zzz 2.6s ease-in-out infinite}
 .breathe{transform-box:fill-box;transform-origin:50% 100%}
 .head{transform-box:fill-box;transform-origin:50% 100%}
